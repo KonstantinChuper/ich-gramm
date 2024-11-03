@@ -4,12 +4,14 @@ type InputProps = {
   type?: string;
   placeholder?: string;
   value?: string;
+  name: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function Input({ type, placeholder, value, onChange }: InputProps) {
+export default function Input({ type, placeholder, value, name, onChange }: InputProps) {
   return (
     <input
+      name={name}
       type={type || "text"}
       placeholder={placeholder}
       value={value}

@@ -7,35 +7,58 @@ import Divider from "./Divider";
 import Form from "./Form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formValidation } from "@/utils/formValidation";
+import { useFetch } from "@/hooks/useFetch";
+
+interface LoginFormData {
+  username: string;
+  password: string;
+}
+
+type AuthResponse = {
+  token: string;
+  user: Record<string, any>; // упрощенная типизация для user
+};
 
 export default function LoginForm() {
   const router = useRouter();
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { fetchData, isLoading, error } = useFetch();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setError(null);
+  const [formData, setFormData] = useState<LoginFormData>({
+    username: "",
+    password: "",
+  });
 
-    try {
-      const response = await fetch("/login", {
+  const [errors, setErrors] = useState<LoginFormData>({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validate = () => {
+    const [isValid, tempErrors] = formValidation<LoginFormData>(formData);
+    setErrors(tempErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (validate()) {
+      const response = await fetchData<AuthResponse>({
+        endpoint: "/api/auth/login",
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userName, password }),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error("Login failed");
+      if (response?.token) {
+        localStorage.setItem("token", response.token);
+        router.push("/");
       }
-
-      const data = await response.json();
-      console.log("Login successful:", data);
-      router.push("/");
-    } catch (error: any) {
-      setError(error.message);
     }
   };
 
@@ -45,20 +68,28 @@ export default function LoginForm() {
         <HeroLogo />
         <div className="w-full flex flex-col gap-[6px]">
           <Input
-            placeholder="Uesrname or email"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
+            name="username"
+            placeholder="Username or email"
+            value={formData.username}
+            onChange={handleChange}
           />
+          {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+
           <Input
+            name="password"
             placeholder="Password"
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.password}
+            onChange={handleChange}
           />
-          {error && <p className="text-red-500">{error}</p>}
-          <button type="submit" className="btn btn-primary w-full mt-[6px]">
-            Log in
+          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+
+          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+
+          <button type="submit" className="btn btn-primary w-full mt-[6px]" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Log in"}
           </button>
+
           <Divider>or</Divider>
         </div>
       </div>

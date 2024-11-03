@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 interface FetchOptions extends Omit<RequestInit, "url"> {
   endpoint: string;
@@ -27,15 +27,19 @@ export const useFetch = () => {
         },
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // throw new Error(`HTTP error! status: ${response.status}`);
+        setError(data.message || "Произошла ошибка");
+        return null;
       }
 
-      const data = await response.json();
       return data;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Произошла ошибка";
-      setError(errorMessage);
+      console.error(errorMessage);
+      setError("Произошла ошибка при подключении к серверу");
       return null;
     } finally {
       setIsLoading(false);
