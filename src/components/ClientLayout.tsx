@@ -12,11 +12,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <div>
-      <div className="flex w-full">
-        {shouldShowAside && <AsideMenu />}
+      <div className="flex">{shouldShowAside && <AsideMenu />}</div>
+      <div className="flex flex-col justify-between h-screen">
         <main className="flex-1">{children}</main>
+        {shouldShowAside && <Footer />}
       </div>
-      {shouldShowAside && <Footer />}
     </div>
   );
 }

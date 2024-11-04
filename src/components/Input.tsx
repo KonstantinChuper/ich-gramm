@@ -16,7 +16,7 @@ export default function Input({ type, placeholder, value, name, onChange }: Inpu
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className="border border-borderColor text-textGrayColor px-[8px] py-[6px] bg-[#FAFAFA] w-full rounded-[3px] shrink-0"
+      className="border border-borderColor text-textGrayColor px-[8px] py-[6px] bg-[#FAFAFA] w-full rounded-[3px] shrink-0 focus:outline-none focus:ring-2 focus:ring-zinc-500"
     />
   );
 }

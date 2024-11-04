@@ -1,5 +1,5 @@
 import Post from "@/components/Post";
-import Container from "@/components/Container";
+import Container from "@/components/HomeContainer";
 import NoMorePostsBanner from "@/components/NoMorePostsBanner";
 
 export default function Home() {

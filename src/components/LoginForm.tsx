@@ -69,7 +69,7 @@ export default function LoginForm() {
         <div className="w-full flex flex-col gap-[6px]">
           <Input
             name="username"
-            placeholder="Username or email"
+            placeholder="Username"
             value={formData.username}
             onChange={handleChange}
           />

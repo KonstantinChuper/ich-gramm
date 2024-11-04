@@ -46,6 +46,10 @@ const config: Config = {
           backgroundColor: "#0095F6",
           color: "#ffffff",
         },
+        ".btn-secondary": {
+          backgroundColor: "#EFEFEF",
+          color: "#000000",
+        },
       });
     }),
   ],

@@ -1,11 +1,11 @@
-import Container from "@/components/Container";
-import HeroLogo from "@/components/HeroLogo";
+import ProfileHeader from "@/components/ProfileHeader";
 import React from "react";
+import Container from "@/components/Container";
 
-export default function profile() {
+export default function Profile() {
   return (
-    <Container className="ml-[245px]">
-      <HeroLogo />
+    <Container>
+      <ProfileHeader />
     </Container>
   );
 }

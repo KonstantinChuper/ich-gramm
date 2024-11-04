@@ -15,6 +15,7 @@ export default function AsideMenu() {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
+  const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
@@ -79,8 +80,8 @@ export default function AsideMenu() {
             </li>
           ))}
           <Link href={"/profile"} className="flex gap-4 items-center pt-[59px]">
-            <ProfileBadge src="/data/profile.png" />
-            <p>Profile</p>
+            <ProfileBadge />
+            <p className={`${isProfilePage ? "font-bold" : "font-normal"}`}>Profile</p>
           </Link>
         </nav>
       </aside>
