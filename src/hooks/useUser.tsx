@@ -49,36 +49,28 @@ export default function useUser(userId?: string) {
 
     if (response?.user) {
       setUser(response.user);
-      setIsCurrentUser(!userId); // если userId не передан, значит это текущий пользователь
+      setIsCurrentUser(!userId);
     }
   }, [fetchData, userId]);
 
   const updateUser = useCallback(
-    async (formDataToSend: FormData) => {
+    async (data: any, isMultipart = false) => {
       const token = localStorage.getItem("token");
       if (!token) {
         return;
       }
 
-      const response = await fetchData<Response>({
+      await fetchData({
         endpoint: "/api/user/current",
         method: "PUT",
-        body: formDataToSend,
+        body: data,
+        isMultipart,
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!response) {
-        throw new Error("Ошибка при обновлении профиля");
-      }
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "Ошибка при обновлении профиля");
-      }
-
-      return result;
+      await fetchUser();
     },
     [fetchUser]
   );

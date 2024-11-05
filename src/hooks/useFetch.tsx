@@ -5,6 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 interface FetchOptions extends Omit<RequestInit, "url"> {
   endpoint: string;
   baseURL?: string;
+  isMultipart?: boolean;
 }
 
 export const useFetch = () => {
@@ -15,22 +16,41 @@ export const useFetch = () => {
     try {
       setIsLoading(true);
       setError(null);
-
+      console.log("OPtions!!!!!!", options)
       const baseURL = options.baseURL || BASE_URL;
       const url = `${baseURL}${options.endpoint}`;
 
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
-      });
+      let fetchOptions: RequestInit = { ...options };
 
+      if (options.isMultipart) {
+        const formData = new FormData();
+        if (options.body && typeof options.body === "object") {
+          Object.entries(options.body as Record<string, any>).forEach(([key, value]) => {
+            formData.append(key, value);
+          });
+        }
+
+        fetchOptions = {
+          ...options,
+          method: options.method || "POST",
+          body: formData,
+          headers: { ...options.headers },
+        };
+      } else {
+        fetchOptions = {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+          },
+          body: JSON.stringify(options.body)
+        };
+      }
+
+      const response = await fetch(url, fetchOptions);
       const data = await response.json();
 
       if (!response.ok) {
-        // throw new Error(`HTTP error! status: ${response.status}`);
         setError(data.message || "Произошла ошибка");
         return null;
       }

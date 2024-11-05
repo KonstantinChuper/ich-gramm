@@ -51,7 +51,7 @@ export default function EditProfile() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file); // сохраняем File объект
+      setSelectedFile(file);
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
     }
@@ -62,21 +62,12 @@ export default function EditProfile() {
     setIsSaving(true);
 
     try {
-      const formDataToSend = new FormData();
-
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value) {
-          formDataToSend.append(key, value);
-        } else {
-          console.warn(`Field ${key} is empty and will not be sent.`);
-        }
-      });
-
+      const formDataToSend: Record<string, any> = { ...formData };
       if (selectedFile) {
-        formDataToSend.append("profile_image", selectedFile);
+        formDataToSend.profile_image = selectedFile;
       }
 
-      await updateUser(formDataToSend);
+      await updateUser(formDataToSend, true);
     } catch (error) {
       console.error("Failed to update profile:", error);
     } finally {
@@ -105,7 +96,7 @@ export default function EditProfile() {
         <div className="mt-11 p-4 bg-inputColor rounded-[20px] flex justify-between">
           <div className="flex gap-4">
             <ProfileBadge maxWidth={56} src={previewImage || user?.profile_image} />
-            <div className="flex">
+            <div className="flex flex-col">
               <p className="font-bold">{user?.username}</p>
               <p className="font-normal text-sm">{user?.bio}</p>
             </div>
