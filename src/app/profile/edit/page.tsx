@@ -5,9 +5,10 @@ import Container from "@/components/Container";
 import ProfileBadge from "@/components/ProfileBadge";
 import Spiner from "@/components/Spiner";
 import useUser from "@/hooks/useUser";
+import { useRouter } from "next/navigation";
 
 export default function EditProfile() {
-  const { user, isLoading, error, updateUser } = useUser();
+  const { user, isLoading, error, updateUser, userAvatar } = useUser();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showNotFound, setShowNotFound] = useState(false);
@@ -18,6 +19,7 @@ export default function EditProfile() {
     bio: "",
   });
   const maxWords = 150;
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -77,6 +79,7 @@ export default function EditProfile() {
       }
 
       await updateUser(formDataToSend);
+      router.push("/profile");
     } catch (error) {
       console.error("Failed to update profile:", error);
     } finally {
@@ -102,18 +105,27 @@ export default function EditProfile() {
     <Container maxWidth="750px">
       <form onSubmit={handleSubmit}>
         <p className="font-bold text-xl pt-12">Edit profile</p>
-        <div className="mt-11 p-4 bg-inputColor rounded-[20px] flex justify-between">
-          <div className="flex gap-4">
-            <ProfileBadge maxWidth={56} src={previewImage || user?.profile_image} />
-            <div className="flex">
-              <p className="font-bold">{user?.username}</p>
-              <p className="font-normal text-sm">{user?.bio}</p>
+        <div className="mt-11 p-4 bg-inputColor rounded-[20px]">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0">
+              <ProfileBadge maxWidth={56} src={previewImage || userAvatar} />
+            </div>
+            <div className="flex-grow min-w-0">
+              <p className="font-bold break-words">{user?.username}</p>
+              <p className="font-normal text-sm break-words">{user?.bio}</p>
+            </div>
+            <div className="flex-shrink-0">
+              <label className="btn btn-primary px-4 py-2 whitespace-nowrap">
+                New photo
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
             </div>
           </div>
-          <label className="btn btn-primary px-4 py-2 self-center">
-            New photo{" "}
-            <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
-          </label>
         </div>
         <div className="pt-8">
           <p className="font-bold text-base">Username</p>

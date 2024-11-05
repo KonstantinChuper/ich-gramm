@@ -11,7 +11,7 @@ export const useFetch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async <T,>(options: FetchOptions): Promise<T | null> => {
+  const fetchData = async <T,>(options: FetchOptions, isMultipart?: boolean): Promise<T | null> => {
     try {
       setIsLoading(true);
       setError(null);
@@ -22,7 +22,7 @@ export const useFetch = () => {
       const response = await fetch(url, {
         ...options,
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": !isMultipart ? "application/json" : "",
           ...options.headers,
         },
       });

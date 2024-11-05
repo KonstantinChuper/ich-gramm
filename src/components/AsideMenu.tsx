@@ -10,12 +10,14 @@ import ProfileBadge from "./ProfileBadge";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
+import useUser from "@/hooks/useUser";
 
 export default function AsideMenu() {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
+  const { userAvatar } = useUser();
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
@@ -80,7 +82,7 @@ export default function AsideMenu() {
             </li>
           ))}
           <Link href={"/profile"} className="flex gap-4 items-center pt-[59px]">
-            <ProfileBadge />
+            <ProfileBadge src={userAvatar} />
             <p className={`${isProfilePage ? "font-bold" : "font-normal"}`}>Profile</p>
           </Link>
         </nav>

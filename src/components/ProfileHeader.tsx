@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Spiner from "./Spiner";
 
 export default function ProfileHeader() {
-  const { user, isLoading, error, isCurrentUser } = useUser();
+  const { user, isLoading, error, isCurrentUser, userAvatar } = useUser();
   const router = useRouter();
 
   if (isLoading) return <Spiner />;
@@ -15,12 +15,8 @@ export default function ProfileHeader() {
   if (!user) return <div>User not found</div>;
 
   return (
-    <div className="pt-[38px] flex gap-[95px]">
-      <ProfileBadge
-        src={user.profile_image || "/default-profile-image.svg"}
-        maxWidth={150}
-        maxHeight={150}
-      />
+    <div className="pt-[38px] flex lg:gap-[95px] gap-5">
+      <ProfileBadge src={userAvatar} maxWidth={150} maxHeight={150} className="shrink-0" />
       <div>
         <div className="flex gap-8 items-center">
           <h1 className="text-xl font-semibold">{user.username}</h1>

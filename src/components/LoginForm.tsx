@@ -89,7 +89,6 @@ export default function LoginForm() {
           <button type="submit" className="btn btn-primary w-full mt-[6px]" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Log in"}
           </button>
-
           <Divider>or</Divider>
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useFetch } from "./useFetch";
 import { isTokenExpired } from "@/utils/tokenUtils";
 import { useRouter } from "next/navigation";
+import { parseImage } from "@/utils/helpers";
 
 interface User {
   _id: string;
@@ -87,6 +88,8 @@ export default function useUser(userId?: string) {
     fetchUser();
   }, []);
 
+  const userAvatar: any = parseImage(user?.profile_image ?? "/default-profile-image.svg");
+
   return {
     user,
     isLoading,
@@ -94,5 +97,6 @@ export default function useUser(userId?: string) {
     isCurrentUser,
     fetchUser,
     updateUser,
+    userAvatar,
   };
 }
