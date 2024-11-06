@@ -17,7 +17,7 @@ interface LoginFormData {
 
 type AuthResponse = {
   token: string;
-  user: Record<string, any>; // упрощенная типизация для user
+  user: string;
 };
 
 export default function LoginForm() {
