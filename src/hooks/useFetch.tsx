@@ -22,7 +22,7 @@ export const useFetch = () => {
       const response = await fetch(url, {
         ...options,
         headers: {
-          "Content-Type": !isMultipart ? "application/json" : "",
+          "Content-Type": isMultipart ? "application/json" : "",
           ...options.headers,
         },
       });

@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import ProfileBadge from "@/components/ProfileBadge";
 import Spiner from "@/components/Spiner";
-import useUser from "@/hooks/useUser";
+import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
 
 export default function EditProfile() {
-  const { user, isLoading, error, updateUser, userAvatar } = useUser();
+  const { user, isLoading, error, updateUser, userAvatar, fetchUser } = useUser();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showNotFound, setShowNotFound] = useState(false);
@@ -53,7 +53,11 @@ export default function EditProfile() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file); // сохраняем File объект
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Файл слишком большой. Максимальный размер 5MB");
+        return;
+      }
+      setSelectedFile(file);
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
     }
@@ -67,21 +71,28 @@ export default function EditProfile() {
       const formDataToSend = new FormData();
 
       Object.entries(formData).forEach(([key, value]) => {
-        if (value) {
-          formDataToSend.append(key, value);
-        } else {
-          console.warn(`Field ${key} is empty and will not be sent.`);
-        }
+        formDataToSend.append(key, value);
       });
 
       if (selectedFile) {
         formDataToSend.append("profile_image", selectedFile);
       }
 
-      await updateUser(formDataToSend);
-      router.push("/profile");
+      const success = await updateUser(formDataToSend);
+
+      if (success) {
+        if (previewImage) {
+          URL.revokeObjectURL(previewImage);
+        }
+        router.push("/profile");
+        router.refresh();
+      }
     } catch (error) {
-      console.error("Failed to update profile:", error);
+      if (error instanceof Error) {
+        console.error("Error updating profile:", error.message);
+      } else {
+        console.error("Unknown error occurred");
+      }
     } finally {
       setIsSaving(false);
     }
