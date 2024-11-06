@@ -8,7 +8,7 @@ import Form from "./Form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formValidation } from "@/utils/formValidation";
-import { useFetch } from "@/hooks/useFetch";
+import { useAxios } from "@/hooks/useAxios";
 
 interface LoginFormData {
   username: string;
@@ -22,7 +22,7 @@ type AuthResponse = {
 
 export default function LoginForm() {
   const router = useRouter();
-  const { fetchData, isLoading, error } = useFetch();
+  const { request, isLoading, error } = useAxios();
 
   const [formData, setFormData] = useState<LoginFormData>({
     username: "",
@@ -49,14 +49,14 @@ export default function LoginForm() {
     e.preventDefault();
 
     if (validate()) {
-      const response = await fetchData<AuthResponse>({
+      const { data } = await request<AuthResponse>({
         endpoint: "/api/auth/login",
         method: "POST",
-        body: JSON.stringify(formData),
+        data: formData,
       });
 
-      if (response?.token) {
-        localStorage.setItem("token", response.token);
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
         router.push("/");
       }
     }

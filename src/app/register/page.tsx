@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Form from "@/components/Form";
 import HeroLogo from "@/components/HeroLogo";
 import Input from "@/components/Input";
 import Link from "next/link";
 import HaveJobBanner from "@/components/HaveJobBanner";
 import { formValidation } from "@/utils/formValidation";
-import { useFetch } from "@/hooks/useFetch";
+import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
 
 interface RegisterFormData {
@@ -15,6 +15,11 @@ interface RegisterFormData {
   full_name: string;
   username: string;
   password: string;
+}
+
+interface RegisterResponse {
+  token: string;
+  success: boolean;
 }
 
 export default function RegisterPage() {
@@ -32,7 +37,7 @@ export default function RegisterPage() {
     password: "",
   });
 
-  const { fetchData, isLoading, error } = useFetch();
+  const { request, isLoading, error } = useAxios();
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,13 +55,14 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       if (validate()) {
-        const response = await fetchData<{ success: boolean }>({
+        const { data, error } = await request<RegisterResponse>({
           endpoint: "/api/auth/register",
           method: "POST",
-          body: JSON.stringify(formData),
+          data: formData,
         });
-        if (response && "token" in response) {
-          localStorage.setItem("token", response.token as string);
+
+        if (data?.token) {
+          localStorage.setItem("token", data.token);
           router.push("/login");
         }
       }
