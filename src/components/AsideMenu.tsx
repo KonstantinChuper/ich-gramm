@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import heroLogo from "@/assets/hero-logo.svg";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,19 +10,25 @@ import ProfileBadge from "./ProfileBadge";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
-import useUser from "@/hooks/useUser";
+import useUser from "@/hooks/useUserAxios";
 
 export default function AsideMenu() {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
-  const { userAvatar } = useUser();
+  const { userAvatar, fetchUser } = useUser();
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
     setActiveSidebarContent(contentId);
   };
+
+  useEffect(() => {
+    if (pathname === "/profile") {
+      fetchUser();
+    }
+  }, [pathname]);
 
   return (
     <div className="relative z-10">

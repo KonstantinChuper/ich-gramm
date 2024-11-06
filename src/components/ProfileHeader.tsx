@@ -5,65 +5,13 @@ import ProfileBadge from "./ProfileBadge";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spiner";
-
-interface StatsItemProps {
-  label: string;
-  value: number;
-}
-
-const StatsItem: React.FC<StatsItemProps> = ({ label, value }) => (
-  <span className="flex gap-1">
-    <strong>{value.toLocaleString()}</strong> {label}
-  </span>
-);
-
-interface ActionButtonsProps {
-  isCurrentUser: boolean;
-  onEditProfile: () => void;
-  onFollow?: () => void;
-  onMessage?: () => void;
-}
-
-const ActionButtons: React.FC<ActionButtonsProps> = ({
-  isCurrentUser,
-  onEditProfile,
-  onFollow,
-  onMessage,
-}) => {
-  if (isCurrentUser) {
-    return (
-      <button
-        onClick={onEditProfile}
-        className="btn btn-secondary px-10 py-1 border hover:bg-gray-100 transition-colors"
-      >
-        Edit Profile
-      </button>
-    );
-  }
-
-  return (
-    <div className="flex gap-2">
-      <button
-        onClick={onFollow}
-        className="btn btn-primary px-10 py-1 border hover:opacity-90 transition-opacity"
-      >
-        Follow
-      </button>
-      <button
-        onClick={onMessage}
-        className="btn btn-secondary px-10 py-1 border hover:bg-gray-100 transition-colors"
-      >
-        Message
-      </button>
-    </div>
-  );
-};
+import ActionButtons from "@/components/ActionButtons";
+import StatsItem from "@/components/StatsItems";
 
 export default function ProfileHeader() {
   const { user, isLoading, error, isCurrentUser, userAvatar } = useUser();
   const router = useRouter();
 
-  // Мемоизируем статистику пользователя
   const userStats = useMemo(() => {
     if (!user) return [];
 
@@ -106,12 +54,7 @@ export default function ProfileHeader() {
 
   return (
     <div className="pt-[38px] flex lg:gap-[95px] gap-5">
-      <ProfileBadge
-        src={userAvatar}
-        maxWidth={150}
-        maxHeight={150}
-        className="shrink-0"
-      />
+      <ProfileBadge src={userAvatar} maxWidth={150} maxHeight={150} className="shrink-0" />
 
       <div className="flex-1">
         <div className="flex items-center gap-8 flex-wrap">

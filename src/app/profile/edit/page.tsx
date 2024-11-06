@@ -8,7 +8,7 @@ import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
 
 export default function EditProfile() {
-  const { user, isLoading, error, updateUser, userAvatar, fetchUser } = useUser();
+  const { user, isLoading, error, updateUser, userAvatar } = useUser();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showNotFound, setShowNotFound] = useState(false);
