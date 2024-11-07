@@ -6,6 +6,7 @@ import ProfileBadge from "@/components/ProfileBadge";
 import Spiner from "@/components/Spiner";
 import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
+import WordCounter from "@/components/WordCounter";
 
 export default function EditProfile() {
   const { user, isLoading, error, updateUser, userAvatar } = useUser();
@@ -166,9 +167,10 @@ export default function EditProfile() {
             onChange={handleTextChange}
             className="mt-[7px] p-3 border border-borderColor w-full rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-500 resize-none"
           />
-          <p className="text-sm text-gray-500 absolute bottom-3 right-4">
-            {formData.bio.length}/{maxWords}
-          </p>
+          <WordCounter
+            currentLength={formData.bio.length}
+            maxLength={maxWords}
+          />
         </div>
         <button
           type="submit"

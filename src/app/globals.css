@@ -12,6 +12,7 @@ html {
   --text-gray-color: #737373;
   --link-color: #00376b;
   --input-bg: #efefef;
+  --bg-color-light: #fafafa;
   --stories-gradient: linear-gradient(
     204deg,
     rgba(131, 58, 180, 1) 0%,

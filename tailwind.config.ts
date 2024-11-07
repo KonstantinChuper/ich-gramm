@@ -15,6 +15,7 @@ const config: Config = {
         linkColor: "var(--link-color)",
         textGrayColor: "var(--text-gray-color)",
         inputColor: "var(--input-bg)",
+        bgColorLight: "var(--bg-color-light)",
       },
       backgroundImage: {
         storyGradient:
