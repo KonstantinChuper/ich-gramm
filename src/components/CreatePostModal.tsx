@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState, DragEvent } from "react";
+import { useAxios } from "@/hooks/useAxios";
 import Image from "next/image";
 import useUser from "@/hooks/useUserAxios";
 import ProfileBadge from "./ProfileBadge";
@@ -14,13 +15,78 @@ interface CreatePostModalProps {
 
 export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
   const { user, userAvatar } = useUser();
+  const { request, isLoading } = useAxios();
   const [postText, setPostText] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const maxWords = 2200;
 
   if (!isOpen) return null;
 
   const handleEmojiSelect = (emoji: string) => {
     setPostText((prevText) => prevText + emoji);
+  };
+
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(file);
+    }
+  };
+
+  const handleSelectClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedImage) {
+      alert("Пожалуйста, добавьте изображение");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("caption", postText); // изменено с text на caption
+    formData.append("image", selectedImage);
+
+    const { error } = await request({
+      endpoint: "/api/post",
+      method: "POST",
+      data: formData,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (error) {
+      console.error("Ошибка при создании поста:", error);
+      alert("Произошла ошибка при создании поста");
+      return;
+    }
+
+    setPostText("");
+    setSelectedImage(null);
+    onClose();
   };
 
   return (
@@ -31,32 +97,77 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
         <div className="border-b border-borderColor p-3 text-center relative">
           <h2 className="font-semibold">Create new post</h2>
           <button
-            onClick={onClose}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-primaryColor font-semibold"
+            onClick={handleSubmit}
+            disabled={isLoading || (!postText.trim() && !selectedImage)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-primaryColor font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Share
+            {isLoading ? "Posting..." : "Post"}
           </button>
         </div>
 
         <div className="flex">
-          <div className="bg-bgColorLight w-full flex-1 rounded-bl-xl">
-            <div className="flex flex-col items-center justify-center min-h-[500px]">
-              <Image src="/icons/media.svg" alt="Media" width={153} height={153} />
-              <p className="mt-4 text-lg">Drag photos and videos here</p>
-              <button className="btn btn-primary mt-4 px-5">Select from computer</button>
+          <div
+            className={`bg-bgColorLight w-full flex-1 rounded-bl-xl ${
+              isDragging
+                ? "border-2 border-dashed border-borderColor"
+                : "border-r border-borderColor"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <div className="flex flex-col items-center justify-center min-h-[500px] py-2">
+              {selectedImage ? (
+                <div className="relative w-full h-full min-h-[500px]">
+                  <Image
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Selected"
+                    fill
+                    className="object-contain"
+                  />
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-4 right-4 rounded-full bg-white p-2 hover:scale-110 transition-all duration-300"
+                  >
+                    <Image
+                      src="/icons/remove-image-photo-icon.svg"
+                      alt="Close"
+                      width={24}
+                      height={24}
+                    />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Image src="/icons/media.svg" alt="Media" width={153} height={153} />
+                  <p className="mt-4 text-lg">Drag photos and videos here</p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageSelect}
+                  />
+                  <button onClick={handleSelectClick} className="btn btn-primary mt-4 px-5">
+                    Select from computer
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
-          <div className="flex flex-col max-w-[340px] flex-1 border-l border-borderColor p-4">
+          <div className="flex flex-col max-w-[340px] flex-1 p-4">
             <div className="flex flex-col gap-3 h-full">
               <div className="flex items-center gap-3">
                 <ProfileBadge src={userAvatar} maxWidth={26} />
                 <p>{user?.username}</p>
               </div>
               <textarea
-                name="post_description"
-                value={"formData.bio"}
-                onChange={() => {}}
+                name="caption"
+                value={postText}
+                onChange={(e) => setPostText(e.target.value)}
+                placeholder="Write a caption..."
+                maxLength={maxWords}
                 className="mt-[7px] p-3 pb-6 border border-borderColor w-full h-full rounded-xl focus:outline-none focus:bg-bgColorLight resize-none flex-1"
               />
               <EmojiPicker onEmojiSelect={handleEmojiSelect} />

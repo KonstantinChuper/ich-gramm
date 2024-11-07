@@ -25,7 +25,7 @@ export default function Post() {
   return (
     <div className="border-b border-borderColor pb-[37px]">
       <div className="flex gap-3 items-center">
-        <ProfileBadge src={examplePost.photoUrl} maxWidth={26} maxHeight={26} isStorie={true} />
+        <ProfileBadge src={examplePost.photoUrl} maxWidth={26} maxHeight={26} has_stories={true} />
         <div className="flex gap-1 text-xs">
           <p className="font-semibold">{examplePost.username}</p>
           <p className="text-textGrayColor">
@@ -86,7 +86,9 @@ export default function Post() {
               className="text-xs text-textGrayColor mt-2"
               onClick={() => setShowComments((prev) => !prev)}
             >
-              {showComments ? "Hide comments" : `View all comments (${examplePost.comments.length})`}
+              {showComments
+                ? "Hide comments"
+                : `View all comments (${examplePost.comments.length})`}
             </button>
           )}
           {showComments && (
