@@ -11,11 +11,13 @@ import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
 import useUser from "@/hooks/useUserAxios";
+import CreatePostModal from "./CreatePostModal";
 
 export default function AsideMenu() {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
   const { userAvatar, fetchUser } = useUser();
 
@@ -30,6 +32,26 @@ export default function AsideMenu() {
     }
   }, [pathname]);
 
+  const handleItemClick = (item: (typeof menuItems)[0]) => {
+    switch (item.action) {
+      case "toggleSidebar":
+        handleToggleSidebar(item.href);
+        break;
+      case "toggleModal":
+        setIsCreateModalOpen(true);
+        break;
+      case "link":
+        setIsSidebarOpen(false);
+        break;
+    }
+  };
+
+  const handleAsideClick = () => {
+    if (isCreateModalOpen) {
+      setIsCreateModalOpen(false);
+    }
+  };
+
   return (
     <div className="relative z-10">
       {isSidebarOpen && (
@@ -38,7 +60,11 @@ export default function AsideMenu() {
           className="fixed inset-0 bg-black opacity-65 z-30"
         ></div>
       )}
-      <aside className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-40">
+      <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <aside
+        onClick={handleAsideClick}
+        className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-40"
+      >
         <nav className="space-y-7 fixed">
           <Link href={"/"} className="max-w-[94px] max-h-[50px]">
             <Image src={heroLogo} width={90} height={50} alt="heroLogo" />
@@ -51,7 +77,7 @@ export default function AsideMenu() {
                   className={`text-sm flex items-center gap-4 ${
                     pathname === item.href && !isSidebarOpen ? "font-bold" : ""
                   }`}
-                  onClick={() => setIsSidebarOpen(false)}
+                  onClick={() => handleItemClick(item)}
                 >
                   <Image
                     src={
@@ -67,7 +93,7 @@ export default function AsideMenu() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => handleToggleSidebar(item.href)}
+                  onClick={() => handleItemClick(item)}
                   className={`text-sm flex items-center gap-4 ${
                     activeSidebarContent === item.href && isSidebarOpen ? "font-bold" : ""
                   }`}

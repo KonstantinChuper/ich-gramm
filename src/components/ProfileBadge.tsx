@@ -12,38 +12,40 @@ interface ProfileBadgeProps {
 
 export default function ProfileBadge({
   maxWidth = 24,
-  maxHeight = 24,
   className,
   has_stories = false,
   src,
 }: ProfileBadgeProps) {
+  const size = maxWidth;
+
   return (
     <>
       {has_stories ? (
         <div className="p-0.5 bg-gradient-to-tr from-yellow-400 to-fuchsia-600 rounded-full">
           <div
-            className={`rounded-full bg-white shrink-0 p-0.5 ${className}`}
-            style={{ maxWidth, maxHeight }}
+            className={`rounded-full bg-white shrink-0 p-0.5 overflow-hidden ${className}`}
+            style={{ width: size, height: size }}
           >
             <Image
               src={src || "/default-profile-image.svg"}
               alt="profile image"
-              width={maxWidth}
-              height={maxHeight}
-              className="rounded-full object-cover"
+              width={size}
+              height={size}
+              className="rounded-full object-cover w-full h-full"
             />
           </div>
         </div>
       ) : (
         <div
-          className={`rounded-full shrink-0`}
+          className={`rounded-full shrink-0 overflow-hidden`}
+          style={{ width: size, height: size }}
         >
           <Image
             src={src || "/default-profile-image.svg"}
             alt="profile image"
-            width={maxWidth}
-            height={maxHeight}
-            className="rounded-full object-cover"
+            width={size}
+            height={size}
+            className="rounded-full object-cover w-full h-full"
           />
         </div>
       )}

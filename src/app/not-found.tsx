@@ -3,7 +3,7 @@ import React from "react";
 
 export default function NotFound() {
   return (
-    <div className="flex justify-center gap-11 py-20">
+    <div className="flex justify-center gap-11 py-20 ml-[245px] px-6">
       <div className="max-w-[300px] max-h-[460px]">
         <HeroImage />
       </div>

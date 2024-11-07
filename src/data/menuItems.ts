@@ -45,6 +45,6 @@ export const menuItems = [
     href: "/create",
     icon: { default: createIcon, filled: createIcon },
     label: "Create",
-    action: "link",
+    action: "toggleModal",
   },
 ];

@@ -26,6 +26,11 @@ export default function ProfileHeader() {
     router.push("/profile/edit");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
   const handleFollow = () => {
     // Логика подписки
     console.log("Follow clicked");
@@ -64,6 +69,7 @@ export default function ProfileHeader() {
             onEditProfile={handleEditProfile}
             onFollow={handleFollow}
             onMessage={handleMessage}
+            onLogout={handleLogout}
           />
         </div>
 
