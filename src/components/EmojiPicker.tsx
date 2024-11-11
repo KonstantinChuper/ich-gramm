@@ -34,7 +34,7 @@ export default function EmojiPicker({ onEmojiSelect }: EmojiPickerProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 w-full mb-2 bg-white border rounded-lg shadow-lg p-2 z-10">
+        <div className="absolute bottom-full left-0 min-w-[270px] w-full mb-2 bg-white border rounded-lg shadow-lg p-2 z-10">
           <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
             {emojis.map((emoji, index) => (
               <button

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function NoMorePostsBanner() {
   return (
-    <div className="flex flex-col justify-center items-center pt-[28px] pb-[57px]">
+    <div className="flex flex-col justify-center items-center pt-[48px] pb-[57px]">
       <Image
         src={"/no-more-posts-banner-image.svg"}
         alt="marked"

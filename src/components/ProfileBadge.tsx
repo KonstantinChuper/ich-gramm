@@ -32,6 +32,7 @@ export default function ProfileBadge({
               width={size}
               height={size}
               className="rounded-full object-cover w-full h-full"
+              priority
             />
           </div>
         </div>
@@ -46,6 +47,7 @@ export default function ProfileBadge({
             width={size}
             height={size}
             className="rounded-full object-cover w-full h-full"
+            priority
           />
         </div>
       )}

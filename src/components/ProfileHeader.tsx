@@ -59,7 +59,12 @@ export default function ProfileHeader() {
 
   return (
     <div className="pt-[38px] flex lg:gap-[95px] gap-5">
-      <ProfileBadge src={userAvatar} maxWidth={150} maxHeight={150} className="shrink-0" />
+      <ProfileBadge
+        src={userAvatar || "/default-profile-image.svg"}
+        maxWidth={150}
+        maxHeight={150}
+        className="shrink-0"
+      />
 
       <div className="flex-1">
         <div className="flex items-center gap-8 flex-wrap">

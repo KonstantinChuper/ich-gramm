@@ -11,7 +11,7 @@ import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
 import useUser from "@/hooks/useUserAxios";
-import CreatePostModal from "./CreatePostModal";
+import CreatePostModal from "./ModalCreatePost";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -50,20 +50,26 @@ export default function AsideMenu() {
     if (isCreateModalOpen) {
       setIsCreateModalOpen(false);
     }
+    // Добавляем событие для закрытия модального окна с постом
+    const event = new CustomEvent("closePostModal");
+    window.dispatchEvent(event);
   };
 
   return (
-    <div className="relative z-10">
+    <div className="relative z-50">
       {isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
           className="fixed inset-0 bg-black opacity-65 z-30"
         ></div>
       )}
-      <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+      <CreatePostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
       <aside
         onClick={handleAsideClick}
-        className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-40"
+        className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-50"
       >
         <nav className="space-y-7 fixed">
           <Link href={"/"} className="max-w-[94px] max-h-[50px]">

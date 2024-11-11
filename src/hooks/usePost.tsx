@@ -3,16 +3,7 @@
 import { useState, useCallback } from "react";
 import { useAxios } from "./useAxios";
 import { useRouter } from "next/navigation";
-
-interface Post {
-  _id: string;
-  user_id: string;
-  image_url: string;
-  caption: string;
-  likes_count: number;
-  comments_count: number;
-  created_at: string;
-}
+import { Post } from "@/types/Post";
 
 interface PostResponse {
   post: Post;
@@ -43,7 +34,10 @@ export default function usePost() {
     if (!token) return;
 
     try {
-      const { data, error } = await request<PostsResponse>({
+      console.log("Fetching user posts...");
+
+      const { data, error } = await request<{ data: Post[] }>({
+        // Изменили тип ответа
         endpoint: "/api/post/all",
         method: "GET",
         headers: {
@@ -51,15 +45,24 @@ export default function usePost() {
         },
       });
 
+      console.log("Raw response:", data); // Смотрим что приходит
+
       if (error) {
         throw new Error(error);
       }
 
-      if (data?.posts) {
-        setPosts(data.posts);
+      // Проверяем формат и устанавливаем данные
+      if (data && "data" in data) {
+        console.log("Setting posts from data.data:", data.data);
+        setPosts(data.data);
+      } else if (Array.isArray(data)) {
+        console.log("Setting posts from array:", data);
+        setPosts(data);
+      } else {
+        console.error("Unexpected data format:", data);
       }
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching user posts:", error);
     }
   }, [request]);
 
@@ -201,6 +204,32 @@ export default function usePost() {
     [request, currentPost]
   );
 
+  // Получение ленты постов
+  const fetchFeedPosts = useCallback(async () => {
+    const token = checkToken();
+    if (!token) return;
+
+    try {
+      const { data, error } = await request<PostsResponse>({
+        endpoint: "/api/post/feed",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (data?.posts) {
+        setPosts(data.posts);
+      }
+    } catch (error) {
+      console.error("Error fetching feed:", error);
+    }
+  }, [request]);
+
   return {
     posts,
     currentPost,
@@ -211,5 +240,6 @@ export default function usePost() {
     createPost,
     updatePost,
     deletePost,
+    fetchFeedPosts,
   };
 }

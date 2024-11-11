@@ -5,20 +5,7 @@ import { useAxios } from "./useAxios";
 import { isTokenExpired } from "@/utils/tokenUtils";
 import { useRouter } from "next/navigation";
 import { parseImage } from "@/utils/helpers";
-
-interface User {
-  _id: string;
-  username: string;
-  email: string;
-  full_name: string;
-  bio: string;
-  profile_image: string;
-  followers_count: number;
-  following_count: number;
-  posts_count: number;
-  created_at: string;
-  has_stories: boolean;
-}
+import { User } from "@/types/User";
 
 interface UserResponse {
   user: User;
@@ -27,6 +14,7 @@ interface UserResponse {
 export default function useUser(userId?: string) {
   const [user, setUser] = useState<User | null>(null);
   const [isCurrentUser, setIsCurrentUser] = useState(true);
+  const [userAvatar, setUserAvatar] = useState("/default-profile-image.svg");
   const { request, isLoading, error } = useAxios();
   const router = useRouter();
 
@@ -53,7 +41,8 @@ export default function useUser(userId?: string) {
     const endpoint = userId ? `/api/user/${userId}` : "/api/user/current";
 
     try {
-      const { data, error } = await request<UserResponse>({
+      const { data, error } = await request<UserResponse | User>({
+        // Изменили тип
         endpoint,
         method: "GET",
         headers: {
@@ -65,9 +54,16 @@ export default function useUser(userId?: string) {
         throw new Error(error);
       }
 
-      if (data?.user) {
-        setUser(data.user);
+      if (!data) return;
+
+      // Проверяем формат данных и извлекаем пользователя
+      const userData = "user" in data ? data.user : data;
+
+      if (userData && "_id" in userData) {
+        setUser(userData);
         setIsCurrentUser(!userId);
+      } else {
+        console.error("Invalid user data format:", data);
       }
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -75,7 +71,7 @@ export default function useUser(userId?: string) {
         router.push("/login");
       }
     }
-  }, [request, userId]);
+  }, [request, userId, router]);
 
   const updateUser = useCallback(
     async (formDataToSend: FormData) => {
@@ -114,7 +110,13 @@ export default function useUser(userId?: string) {
     fetchUser();
   }, [userId]);
 
-  const userAvatar = parseImage(user?.profile_image || "") || "/default-profile-image.svg";
+  // const userAvatar = parseImage(user?.profile_image || "/default-profile-image.svg");
+
+  useEffect(() => {
+    if (user?.profile_image) {
+      setUserAvatar(parseImage(user.profile_image));
+    }
+  }, [user?.profile_image]);
 
   return {
     user,

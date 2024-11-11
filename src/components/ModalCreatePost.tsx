@@ -14,8 +14,8 @@ interface CreatePostModalProps {
 }
 
 export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
-  const { user, userAvatar } = useUser();
-  const { request, isLoading } = useAxios();
+  const { user, isLoading, userAvatar } = useUser();
+  const { request } = useAxios();
   const [postText, setPostText] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -23,6 +23,13 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
   const maxWords = 2200;
 
   if (!isOpen) return null;
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= maxWords) {
+      setPostText(value);
+    }
+  };
 
   const handleEmojiSelect = (emoji: string) => {
     setPostText((prevText) => prevText + emoji);
@@ -61,12 +68,12 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
 
   const handleSubmit = async () => {
     if (!selectedImage) {
-      alert("Пожалуйста, добавьте изображение");
+      alert("Please add an image");
       return;
     }
 
     const formData = new FormData();
-    formData.append("caption", postText); // изменено с text на caption
+    formData.append("caption", postText);
     formData.append("image", selectedImage);
 
     const { error } = await request({
@@ -79,8 +86,8 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
     });
 
     if (error) {
-      console.error("Ошибка при создании поста:", error);
-      alert("Произошла ошибка при создании поста");
+      console.error("Error creating post:", error);
+      alert("Error creating post");
       return;
     }
 
@@ -165,13 +172,17 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
               <textarea
                 name="caption"
                 value={postText}
-                onChange={(e) => setPostText(e.target.value)}
+                onChange={handleTextChange}
                 placeholder="Write a caption..."
                 maxLength={maxWords}
-                className="mt-[7px] p-3 pb-6 border border-borderColor w-full h-full rounded-xl focus:outline-none focus:bg-bgColorLight resize-none flex-1"
+                className="mt-[7px] p-3 pb-6 border border-borderColor w-full h-full rounded-xl focus:outline-none focus:bg-bgColorLight !ring-textGrayColor focus:!ring-textGrayColor focus:!border-textGrayColor resize-none flex-1"
               />
               <EmojiPicker onEmojiSelect={handleEmojiSelect} />
-              <WordCounter currentLength={0} maxLength={maxWords} className="bottom-6 right-7" />
+              <WordCounter
+                currentLength={postText.length}
+                maxLength={maxWords}
+                className="bottom-6 right-7"
+              />
             </div>
           </div>
         </div>

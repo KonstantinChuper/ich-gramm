@@ -1,11 +1,13 @@
 import ProfileHeader from "@/components/ProfileHeader";
-import React from "react";
 import Container from "@/components/Container";
+import UserPostList from "@/components/UserPostList";
 
 export default function Profile() {
+
   return (
     <Container>
-      <ProfileHeader />
+      <ProfileHeader/>
+      <UserPostList/>
     </Container>
   );
 }

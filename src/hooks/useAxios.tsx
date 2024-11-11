@@ -27,7 +27,6 @@ export function useAxios() {
     setError(null);
 
     try {
-      // Важно: для FormData не устанавливаем Content-Type
       const isFormData = data instanceof FormData;
       const requestHeaders = {
         ...headers,
@@ -42,7 +41,6 @@ export function useAxios() {
         ...config,
       });
 
-      // Проверяем, что response.data существует
       if (!response.data) {
         throw new Error("Нет данных в ответе");
       }
