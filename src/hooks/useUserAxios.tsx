@@ -42,7 +42,6 @@ export default function useUser(userId?: string) {
 
     try {
       const { data, error } = await request<UserResponse | User>({
-        // Изменили тип
         endpoint,
         method: "GET",
         headers: {
@@ -56,7 +55,6 @@ export default function useUser(userId?: string) {
 
       if (!data) return;
 
-      // Проверяем формат данных и извлекаем пользователя
       const userData = "user" in data ? data.user : data;
 
       if (userData && "_id" in userData) {

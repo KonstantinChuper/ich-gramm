@@ -8,8 +8,12 @@ import Spinner from "@/components/Spiner";
 import ActionButtons from "@/components/ActionButtons";
 import StatsItem from "@/components/StatsItems";
 
-export default function ProfileHeader() {
-  const { user, isLoading, error, isCurrentUser, userAvatar } = useUser();
+interface ProfileHeaderProps {
+  userId?: string;
+}
+
+export default function ProfileHeader({ userId }: ProfileHeaderProps) {
+  const { user, isLoading, error, isCurrentUser, userAvatar } = useUser(userId);
   const router = useRouter();
 
   const userStats = useMemo(() => {
