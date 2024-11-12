@@ -7,13 +7,19 @@ import ModalPost from "./ModalPost";
 import { Post } from "@/types/Post";
 import PictureLoading from "./PictureLoading";
 
-export default function UserPostList() {
-  const { posts, isLoading, error, fetchUserPosts } = usePost();
+interface UserPostListByIdProps {
+  userId: string;
+}
+
+export default function UserPostListById({ userId }: UserPostListByIdProps) {
+  const { posts, isLoading, error, fetchUserPostsById } = usePost();
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   useEffect(() => {
-    fetchUserPosts();
-  }, []);
+    if (userId) {
+      fetchUserPostsById(userId);
+    }
+  }, [userId, fetchUserPostsById]);
 
   useEffect(() => {
     const handleCloseModal = () => {
@@ -34,7 +40,7 @@ export default function UserPostList() {
   }
 
   if (!posts || posts.length === 0) {
-    return <div className="pt-[87px] text-center">You don't have any posts yet</div>;
+    return <div className="pt-[87px] text-center">No posts yet</div>;
   }
 
   return (

@@ -16,6 +16,11 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
   const { user, isLoading, error, isCurrentUser, userAvatar } = useUser(userId);
   const router = useRouter();
 
+  console.log('ProfileHeader userId:', userId);
+  console.log('Current user:', user);
+  console.log('Is current user:', isCurrentUser);
+  console.log(user);
+
   const userStats = useMemo(() => {
     if (!user) return [];
 

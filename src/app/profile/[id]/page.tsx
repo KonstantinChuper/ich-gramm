@@ -2,16 +2,17 @@
 
 import ProfileHeader from "@/components/ProfileHeader";
 import Container from "@/components/Container";
-import UserPostList from "@/components/UserPostList";
+import UserPostListById from "@/components/UserPostListById";
 import { useParams } from "next/navigation";
 
 export default function UserProfile() {
-  const { userId } = useParams();
+  const params = useParams();
+  const id = params.id as string;
 
   return (
     <Container>
-      <ProfileHeader userId={userId as string} />
-      <UserPostList userId={userId as string} />
+      <ProfileHeader userId={id} />
+      <UserPostListById userId={id} />
     </Container>
   );
 }
