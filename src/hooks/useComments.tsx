@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAxios } from "./useAxios";
 import { Comment } from "@/types/Comments";
 import useUser from "./useUserAxios";
+import { parseImage } from "@/utils/helpers";
 
 interface UseCommentsProps {
   postId: string;
@@ -66,7 +67,7 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
           if (comment.user_id === currentUser?._id) {
             userData = {
               username: currentUser.username,
-              avatar_url: userAvatar,
+              avatar_url: parseImage(userAvatar),
             };
           } else {
             if (!userDataCache.has(comment.user_id)) {
@@ -74,7 +75,8 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
               if (fetchedUser) {
                 userDataCache.set(comment.user_id, {
                   username: fetchedUser.username,
-                  avatar_url: fetchedUser.profile_image || "/default-profile-image.svg",
+                  avatar_url:
+                    parseImage(fetchedUser.profile_image || "") || "/default-profile-image.svg",
                 });
               }
             }
@@ -137,7 +139,13 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
           },
         };
 
-        setComments((prev) => [...prev, newComment]);
+        setComments((prevComments) => {
+          const updatedComments = [...prevComments, newComment];
+          return updatedComments.sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+        });
+
         await fetchComments();
       }
     } catch (error) {

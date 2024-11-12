@@ -9,6 +9,7 @@ import messageIcon from "@/assets/message.svg";
 import useUser from "@/hooks/useUserAxios";
 import type { Post } from "@/types/Post";
 import { getTimeAgo } from "@/utils/helpers";
+import { useRouter } from "next/navigation";
 
 interface PostProps {
   post: Post;
@@ -19,9 +20,16 @@ export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [showFull, setShowFull] = useState(false);
   const MAX_TEXT_LENGTH = 13;
+  const router = useRouter();
 
-  const handleLikeClick = () => {
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setIsLiked((prev) => !prev);
+  };
+
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/profile/${post.user_id}`);
   };
 
   const shouldShowMoreButton = (text: string) => {
@@ -37,7 +45,7 @@ export default function Post({ post }: PostProps) {
 
   return (
     <div className="border-b border-borderColor pb-[37px]">
-      <div className="flex gap-3 items-center">
+      <div onClick={handleUserClick} className="flex gap-3 items-center cursor-pointer">
         <ProfileBadge src={userAvatar} maxWidth={26} has_stories={user?.has_stories} />
         <div className="flex gap-1 text-xs">
           <p className="font-semibold">{user?.username}</p>

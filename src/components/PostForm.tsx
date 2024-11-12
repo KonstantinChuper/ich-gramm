@@ -10,7 +10,7 @@ interface PostFormProps {
 
 export default function PostForm({ postId }: PostFormProps) {
   const [comment, setComment] = useState("");
-  const { addComment } = useComments({ postId });
+  const { addComment, fetchComments } = useComments({ postId });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +19,7 @@ export default function PostForm({ postId }: PostFormProps) {
 
     try {
       await addComment(comment.trim());
+      await fetchComments();
       setComment("");
     } catch (error) {
       console.error("Error adding comment:", error);

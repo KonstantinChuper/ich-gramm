@@ -20,7 +20,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const maxWords = 2200;
+  const maxWords = 400;
 
   if (!isOpen) return null;
 

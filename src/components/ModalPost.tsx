@@ -3,11 +3,12 @@
 import Image from "next/image";
 import ProfileBadge from "./ProfileBadge";
 import { Post } from "@/types/Post";
-import useUserAxios from "@/hooks/useUserAxios";
 import menuBtn from "@/assets/Menu-buttons.svg";
-import { getTimeAgo } from "@/utils/helpers";
+import { getTimeAgo, parseImage } from "@/utils/helpers";
 import PostForm from "./PostForm";
 import CommentList from "./CommentList";
+import { useEffect, useState } from "react";
+import { useAxios } from "@/hooks/useAxios";
 
 interface ModalPostProps {
   post: Post;
@@ -15,8 +16,30 @@ interface ModalPostProps {
   onClose: () => void;
 }
 
+interface PostAuthor {
+  username: string;
+  profile_image?: string;
+}
+
 export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
-  const { userAvatar, user } = useUserAxios();
+  const [postAuthor, setPostAuthor] = useState<PostAuthor | null>(null);
+  const { request } = useAxios();
+
+  // Получаем данные автора поста
+  useEffect(() => {
+    const fetchPostAuthor = async () => {
+      const { data } = await request<PostAuthor>({
+        endpoint: `/api/user/${post.user_id}`,
+        method: "GET",
+      });
+      if (data) {
+        setPostAuthor(data);
+      }
+    };
+
+    fetchPostAuthor();
+  }, [post.user_id]);
+
   if (!isOpen) return null;
 
   return (
@@ -24,9 +47,9 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
       <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
 
       {/* Modal window */}
-      <div className="bg-white rounded-md w-full relative max-w-[1000px] z-50 mx-4 flex">
+      <div className="bg-white rounded-md w-full relative max-h-[650px] max-w-[1000px] z-50 mx-4 flex">
         {/* Left side - image */}
-        <div className="flex-1 relative min-h-[650px] max-w-[577px]">
+        <div className="flex-1 relative min-h-[650px] max-h-[650px] max-w-[577px]">
           <Image
             src={post.image_url}
             alt={post.caption || "Post image"}
@@ -39,8 +62,11 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
         <div className="flex flex-col border-l border-borderColor max-w-[433px] flex-1">
           <div className="p-4 border-b border-borderColor flex justify-between">
             <div className="flex items-center gap-3">
-              <ProfileBadge src={userAvatar} maxWidth={32} />
-              <span className="font-semibold">{user?.username}</span>
+              <ProfileBadge 
+                src={postAuthor?.profile_image ? parseImage(postAuthor.profile_image) : "/default-profile-image.svg"} 
+                maxWidth={32} 
+              />
+              <span className="font-semibold">{postAuthor?.username}</span>
             </div>
             <button>
               <Image src={menuBtn} alt="menu" width={24} height={24} />
@@ -48,23 +74,26 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           </div>
 
           {/* Post caption */}
-          <div className="p-5 flex-1">
-            <div className="flex gap-3 mb-4">
-              <ProfileBadge src={userAvatar} maxWidth={32} />
-              <div className="flex-1 min-w-0">
-                {" "}
-                <span className="font-semibold mr-2 text-base">{user?.username}</span>
-                <span className="break-all whitespace-pre-line font-normal text-sm">
-                  {" "}
-                  {post.caption}
-                </span>
-                <p className="text-xs text-textGrayColor pt-1">{getTimeAgo(post.created_at)}</p>
+          {post.caption && (
+            <div className="p-5">
+              <div className="flex gap-3">
+                <ProfileBadge 
+                  src={postAuthor?.profile_image ? parseImage(postAuthor.profile_image) : "/default-profile-image.svg"} 
+                  maxWidth={32} 
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="font-semibold mr-2 text-base">{postAuthor?.username}</span>
+                  <span className="break-all whitespace-pre-line font-normal text-sm">
+                    {post.caption}
+                  </span>
+                  <p className="text-xs text-textGrayColor pt-1">{getTimeAgo(post.created_at)}</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Post comments */}
-          <div className="p-5 flex-1 overflow-y-auto">
+          <div className="px-5 pb-5 pt-2 border-t border-borderColor flex-1 overflow-y-auto">
             <CommentList postId={post._id} />
           </div>
 
