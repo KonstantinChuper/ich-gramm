@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileBadge from "./ProfileBadge";
 import Image from "next/image";
 import likeIcon from "@/assets/menu-icons/notification.svg";
@@ -10,21 +10,87 @@ import useUser from "@/hooks/useUserAxios";
 import type { Post } from "@/types/Post";
 import { getTimeAgo } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
+import { useAxios } from "@/hooks/useAxios";
 
 interface PostProps {
   post: Post;
 }
 
 export default function Post({ post }: PostProps) {
-  const { user } = useUser(post.user_id);
+  const { user: currentUser } = useUser();
+  const { user: postAuthor } = useUser(post.user_id);
   const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(post.likes_count);
   const [showFull, setShowFull] = useState(false);
   const MAX_TEXT_LENGTH = 13;
   const router = useRouter();
+  const { request } = useAxios();
 
-  const handleLikeClick = (e: React.MouseEvent) => {
+  useEffect(() => {
+    const checkIfLiked = async () => {
+      const { data } = await request({
+        endpoint: `/api/likes/${post._id}/likes`,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      setIsLiked(
+        (Array.isArray(data) ? data : []).some((like: any) => like.user_id === currentUser?._id) ||
+          false
+      );
+    };
+
+    if (currentUser) {
+      checkIfLiked();
+    }
+  }, [post._id, currentUser]);
+
+  const getCommentText = (count: number) => {
+    return `${count} comment${count === 1 ? "" : "s"}`;
+  };
+
+  const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsLiked((prev) => !prev);
+
+    if (!currentUser) return;
+
+    try {
+      if (isLiked) {
+        // Убираем лайк
+        await request({
+          endpoint: `/api/likes/${post._id}/unlike/${currentUser._id}`,
+          method: "DELETE",
+          data: {
+            userId: currentUser._id,
+            postId: post._id,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        setLikesCount((prev) => prev - 1);
+      } else {
+        // Ставим лайк
+        await request({
+          endpoint: `/api/likes/${post._id}/like/${currentUser._id}`,
+          method: "POST",
+          data: {
+            userId: currentUser._id,
+            postId: post._id,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        setLikesCount((prev) => prev + 1);
+      }
+
+      setIsLiked((prev) => !prev);
+    } catch (error) {
+      console.error("Error handling like:", error);
+    }
   };
 
   const handleUserClick = (e: React.MouseEvent) => {
@@ -52,12 +118,12 @@ export default function Post({ post }: PostProps) {
     <div className="border-b border-borderColor pb-[37px]">
       <div onClick={handleUserClick} className="flex gap-3 items-center cursor-pointer">
         <ProfileBadge
-          src={user?.profile_image || "/default-profile-image.svg"}
+          src={postAuthor?.profile_image || "/default-profile-image.svg"}
           maxWidth={26}
-          has_stories={user?.has_stories}
+          has_stories={postAuthor?.has_stories}
         />
         <div className="flex gap-1 text-xs">
-          <p className="font-semibold">{user?.username}</p>
+          <p className="font-semibold">{postAuthor?.username}</p>
           <p className="text-textGrayColor">
             <span className="font-extrabold">&middot;</span> {getTimeAgo(post.created_at)}{" "}
             <span className="font-extrabold">&middot;</span>
@@ -68,7 +134,10 @@ export default function Post({ post }: PostProps) {
       <Image src={post.image_url} alt="post image" width={454} height={555} className="pt-[12px]" />
 
       <div className="pt-[12px] flex gap-[14px]">
-        <button onClick={handleLikeClick}>
+        <button
+          onClick={handleLikeClick}
+          className={`transition-transform ${isLiked ? "scale-90" : "scale-100"}`}
+        >
           <Image
             src={isLiked ? likeIconFilled : likeIcon}
             alt="heart icon"
@@ -79,11 +148,12 @@ export default function Post({ post }: PostProps) {
         <Image src={messageIcon} alt="comment icon" width={24} height={24} />
       </div>
 
-      <p className="pt-[8px] text-[12px] font-semibold">{post.likes_count} likes</p>
+      <p className="pt-[8px] text-[12px] font-semibold">{likesCount} likes</p>
 
       {post.caption && (
         <p className="text-[12px]">
-          <span className="font-semibold">{user?.username}</span> {formatCaption(post.caption)}
+          <span className="font-semibold">{postAuthor?.username}</span>{" "}
+          {formatCaption(post.caption)}
           {shouldShowMoreButton(post.caption) && (
             <button
               className="text-xs text-textGrayColor ml-1 hover:text-gray-600"
@@ -96,7 +166,7 @@ export default function Post({ post }: PostProps) {
       )}
 
       {post.comments_count > 0 && (
-        <p className="text-xs text-textGrayColor mt-2">{post.comments_count} comments</p>
+        <p className="text-xs text-textGrayColor mt-2">{getCommentText(post.comments_count)}</p>
       )}
     </div>
   );

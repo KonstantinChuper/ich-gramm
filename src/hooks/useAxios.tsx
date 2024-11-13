@@ -27,10 +27,12 @@ export function useAxios() {
     setError(null);
 
     try {
+      const token = localStorage.getItem("token");
       const isFormData = data instanceof FormData;
       const requestHeaders = {
         ...headers,
         ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        Authorization: token ? `Bearer ${token}` : "",
       };
 
       const response = await axios({
