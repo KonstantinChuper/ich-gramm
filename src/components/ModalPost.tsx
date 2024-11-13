@@ -103,7 +103,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           </div>
 
           <div className="ml-[14px] pb-3">
-            <LikeCounter postId={post._id} initialLikesCount={post.likes_count} />
+            <LikeCounter postId={post._id} />
             <p className="text-[10px] text-textGrayColor mt-2">
               {getTimeAgo(post.created_at)}
             </p>

@@ -61,7 +61,7 @@ export default function Post({ post }: PostProps) {
       <Image src={post.image_url} alt="post image" width={454} height={555} className="pt-[12px]" />
 
       <div className="pt-[12px]">
-        <LikeCounter postId={post._id} initialLikesCount={post.likes_count} />
+        <LikeCounter postId={post._id} />
       </div>
 
       {post.caption && (

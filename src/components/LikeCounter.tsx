@@ -11,29 +11,27 @@ import { usePostContext } from "@/contexts/PostContext";
 
 interface LikeCounterProps {
   postId: string;
-  initialLikesCount: number;
 }
 
-export default function LikeCounter({ postId, initialLikesCount }: LikeCounterProps) {
+export default function LikeCounter({ postId }: LikeCounterProps) {
   const { user: currentUser } = useUser();
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(initialLikesCount);
   const { request } = useAxios();
-  const { updatePostLike } = usePostContext();
+  const { updatePostLike, getPostLikes, getIsPostLiked } = usePostContext();
+  const likesCount = getPostLikes(postId);
+  const isLiked = getIsPostLiked(postId);
+
   useEffect(() => {
     const checkIfLiked = async () => {
       const { data } = await request({
         endpoint: `/api/likes/${postId}/likes`,
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
 
-      setIsLiked(
-        (Array.isArray(data) ? data : []).some((like: any) => like.user_id === currentUser?._id) ||
-          false
+      const isPostLiked = (Array.isArray(data) ? data : []).some(
+        (like: any) => like.user_id === currentUser?._id
       );
+
+      updatePostLike(postId, likesCount, isPostLiked);
     };
 
     if (currentUser) {
@@ -59,9 +57,7 @@ export default function LikeCounter({ postId, initialLikesCount }: LikeCounterPr
             "Content-Type": "application/json",
           },
         });
-        setLikesCount((prev) => prev - 1);
-        const newCount = likesCount - 1;
-        updatePostLike(postId, newCount); 
+        updatePostLike(postId, likesCount - 1, false);
       } else {
         await request({
           endpoint: `/api/likes/${postId}/like/${currentUser._id}`,
@@ -74,12 +70,8 @@ export default function LikeCounter({ postId, initialLikesCount }: LikeCounterPr
             "Content-Type": "application/json",
           },
         });
-        setLikesCount((prev) => prev + 1);
-        const newCount = likesCount + 1;
-        updatePostLike(postId, newCount);
+        updatePostLike(postId, likesCount + 1, true);
       }
-
-      setIsLiked((prev) => !prev);
     } catch (error) {
       console.error("Error handling like:", error);
     }
