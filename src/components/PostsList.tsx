@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import usePost from "@/hooks/usePost";
+import { useEffect } from "react";
 import Spinner from "./Spiner";
 import Post from "./Post";
 import NoMorePostsBanner from "@/components/NoMorePostsBanner";
 import ModalPost from "./ModalPost";
-import { Post as PostType } from "@/types/Post";
+import { usePostContext } from "@/contexts/PostContext";
 
 export default function PostsList() {
-  const { posts, isLoading, fetchFeedPosts } = usePost();
-  const [selectedPost, setSelectedPost] = useState<PostType | null>(null);
+  const { posts, isLoading, selectedPost, setSelectedPost, fetchFeedPosts } = usePostContext();
 
   useEffect(() => {
     fetchFeedPosts();
@@ -28,9 +26,9 @@ export default function PostsList() {
 
   if (isLoading) {
     return <Spinner />;
-  } 
+  }
 
-  if (!posts || posts.length === 0 && !isLoading) {
+  if (!posts || (posts.length === 0 && !isLoading)) {
     return (
       <div className="text-center py-8">
         <p>No posts in your feed yet.</p>

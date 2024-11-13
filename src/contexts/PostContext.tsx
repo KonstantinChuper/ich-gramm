@@ -2,61 +2,70 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { Post } from "@/types/Post";
-import { useAxios } from "@/hooks/useAxios";
+import usePost from "@/hooks/usePost";
 
 interface PostContextType {
   posts: Post[];
   isLoading: boolean;
+  error: string | null;
   selectedPost: Post | null;
   setSelectedPost: (post: Post | null) => void;
-  fetchPosts: () => Promise<void>;
-  updatePostLikes: (postId: string, newLikesCount: number) => void;
+  updatePostLike: (postId: string, newLikesCount: number) => void;
+  fetchFeedPosts: () => Promise<void>;
 }
 
-const PostContext = createContext<PostContextType | undefined>(undefined);
+const initialContext: PostContextType = {
+  posts: [],
+  isLoading: false,
+  error: null,
+  selectedPost: null,
+  setSelectedPost: () => {},
+  updatePostLike: () => {},
+  fetchFeedPosts: async () => {},
+};
+
+const PostContext = createContext<PostContextType>(initialContext);
 
 export function PostProvider({ children }: { children: React.ReactNode }) {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const { request } = useAxios();
+  const { posts, currentPost: selectedPost, isLoading, error, fetchFeedPosts } = usePost();
 
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    try {
-      const { data } = await request<Post[]>({
-        endpoint: "/api/user/feed",
-        method: "GET",
-      });
-      setPosts(data || []);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const [localPosts, setLocalPosts] = useState<Post[]>(posts);
+  const [localSelectedPost, setLocalSelectedPost] = useState<Post | null>(selectedPost);
+
+  React.useEffect(() => {
+    setLocalPosts(posts);
+  }, [posts]);
+
+  React.useEffect(() => {
+    setLocalSelectedPost(selectedPost);
+  }, [selectedPost]);
+
+  const setSelectedPost = (post: Post | null) => {
+    setLocalSelectedPost(post);
   };
 
-  const updatePostLikes = (postId: string, newLikesCount: number) => {
-    setPosts((currentPosts) =>
+  const updatePostLike = (postId: string, newLikesCount: number) => {
+    setLocalPosts((currentPosts) =>
       currentPosts.map((post) =>
         post._id === postId ? { ...post, likes_count: newLikesCount } : post
       )
     );
 
-    if (selectedPost?._id === postId) {
-      setSelectedPost((prev) => (prev ? { ...prev, likes_count: newLikesCount } : null));
+    if (localSelectedPost?._id === postId) {
+      setLocalSelectedPost((prev) => (prev ? { ...prev, likes_count: newLikesCount } : null));
     }
   };
 
   return (
     <PostContext.Provider
       value={{
-        posts,
+        posts: localPosts,
         isLoading,
-        selectedPost,
+        error,
+        selectedPost: localSelectedPost,
         setSelectedPost,
-        fetchPosts,
-        updatePostLikes,
+        updatePostLike,
+        fetchFeedPosts,
       }}
     >
       {children}
@@ -66,7 +75,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
 
 export const usePostContext = () => {
   const context = useContext(PostContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("usePostContext must be used within a PostProvider");
   }
   return context;

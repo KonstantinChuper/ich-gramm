@@ -7,6 +7,7 @@ import likeIconFilled from "@/assets/menu-icons/notification-filled.svg";
 import messageIcon from "@/assets/message.svg";
 import { useAxios } from "@/hooks/useAxios";
 import useUser from "@/hooks/useUserAxios";
+import { usePostContext } from "@/contexts/PostContext";
 
 interface LikeCounterProps {
   postId: string;
@@ -18,7 +19,7 @@ export default function LikeCounter({ postId, initialLikesCount }: LikeCounterPr
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const { request } = useAxios();
-
+  const { updatePostLike } = usePostContext();
   useEffect(() => {
     const checkIfLiked = async () => {
       const { data } = await request({
@@ -59,6 +60,8 @@ export default function LikeCounter({ postId, initialLikesCount }: LikeCounterPr
           },
         });
         setLikesCount((prev) => prev - 1);
+        const newCount = likesCount - 1;
+        updatePostLike(postId, newCount); 
       } else {
         await request({
           endpoint: `/api/likes/${postId}/like/${currentUser._id}`,
@@ -72,6 +75,8 @@ export default function LikeCounter({ postId, initialLikesCount }: LikeCounterPr
           },
         });
         setLikesCount((prev) => prev + 1);
+        const newCount = likesCount + 1;
+        updatePostLike(postId, newCount);
       }
 
       setIsLiked((prev) => !prev);
