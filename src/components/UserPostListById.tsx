@@ -19,7 +19,7 @@ export default function UserPostListById({ userId }: UserPostListByIdProps) {
     if (userId) {
       fetchUserPostsById(userId);
     }
-  }, [userId, fetchUserPostsById]);
+  }, [userId]);
 
   useEffect(() => {
     const handleCloseModal = () => {

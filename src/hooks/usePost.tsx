@@ -67,6 +67,8 @@ export default function usePost() {
            },
          });
 
+         console.log("Response data:", data);
+
          if (error) throw new Error(error);
 
          if (data && "data" in data) {
