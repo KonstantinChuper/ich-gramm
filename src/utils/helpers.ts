@@ -32,3 +32,7 @@ export function getTimeAgo(date: string | Date): string {
     return `${years} y`;
   }
 }
+
+export const countTextLetters = (count: number) => {
+  return `${count} comment${count === 1 ? "" : "s"}`;
+};

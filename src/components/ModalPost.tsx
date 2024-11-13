@@ -10,6 +10,7 @@ import CommentList from "./CommentList";
 import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
+import LikeCounter from "./LikeCounter";
 
 interface ModalPostProps {
   post: Post;
@@ -79,7 +80,6 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
             </button>
           </div>
 
-          {/* Post caption */}
           {post.caption && (
             <div className="p-5">
               <div className="flex gap-3">
@@ -98,12 +98,17 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
             </div>
           )}
 
-          {/* Post comments */}
           <div className="px-5 pb-5 pt-2 border-borderColor flex-1 overflow-y-auto">
             <CommentList postId={post._id} />
           </div>
 
-          {/* Post form */}
+          <div className="ml-[14px] pb-3">
+            <LikeCounter postId={post._id} initialLikesCount={post.likes_count} />
+            <p className="text-[10px] text-textGrayColor mt-2">
+              {getTimeAgo(post.created_at)}
+            </p>
+          </div>
+
           <div className="flex-0 relative z-50">
             <PostForm postId={post._id} />
           </div>
