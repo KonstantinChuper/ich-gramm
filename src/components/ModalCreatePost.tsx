@@ -74,7 +74,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
 
     const formData = new FormData();
     formData.append("caption", postText);
-    formData.append("image", selectedImage);
+    formData.append("image", selectedImage, selectedImage.name);
 
     const { error } = await request({
       endpoint: "/api/post",

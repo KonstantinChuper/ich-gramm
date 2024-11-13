@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useAxios } from "./useAxios";
 import { useRouter } from "next/navigation";
 import { Post } from "@/types/Post";
