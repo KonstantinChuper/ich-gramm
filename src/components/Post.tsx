@@ -16,7 +16,7 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  const { user, userAvatar } = useUser(post.user_id);
+  const { user } = useUser(post.user_id);
   const [isLiked, setIsLiked] = useState(false);
   const [showFull, setShowFull] = useState(false);
   const MAX_TEXT_LENGTH = 13;
@@ -30,6 +30,11 @@ export default function Post({ post }: PostProps) {
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     router.push(`/profile/${post.user_id}`);
+  };
+
+  const handleShowFullClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowFull((prev) => !prev);
   };
 
   const shouldShowMoreButton = (text: string) => {
@@ -46,7 +51,11 @@ export default function Post({ post }: PostProps) {
   return (
     <div className="border-b border-borderColor pb-[37px]">
       <div onClick={handleUserClick} className="flex gap-3 items-center cursor-pointer">
-        <ProfileBadge src={userAvatar} maxWidth={26} has_stories={user?.has_stories} />
+        <ProfileBadge
+          src={user?.profile_image || "/default-profile-image.svg"}
+          maxWidth={26}
+          has_stories={user?.has_stories}
+        />
         <div className="flex gap-1 text-xs">
           <p className="font-semibold">{user?.username}</p>
           <p className="text-textGrayColor">
@@ -78,7 +87,7 @@ export default function Post({ post }: PostProps) {
           {shouldShowMoreButton(post.caption) && (
             <button
               className="text-xs text-textGrayColor ml-1 hover:text-gray-600"
-              onClick={() => setShowFull((prev) => !prev)}
+              onClick={handleShowFullClick}
             >
               {showFull ? " less" : " more"}
             </button>

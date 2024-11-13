@@ -6,7 +6,7 @@ interface ProfileBadgeProps {
   maxHeight?: number;
   minWidth?: number;
   className?: string;
-  src?: string;
+  src?: string | null;
   has_stories?: boolean;
 }
 

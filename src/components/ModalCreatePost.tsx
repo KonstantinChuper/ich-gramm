@@ -14,7 +14,7 @@ interface CreatePostModalProps {
 }
 
 export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProps) {
-  const { user, isLoading, userAvatar } = useUser();
+  const { user, isLoading } = useUser();
   const { request } = useAxios();
   const [postText, setPostText] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -93,6 +93,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
 
     setPostText("");
     setSelectedImage(null);
+    window.dispatchEvent(new CustomEvent("postCreated"));
     onClose();
   };
 
@@ -166,7 +167,10 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
           <div className="flex flex-col max-w-[340px] flex-1 p-4">
             <div className="flex flex-col gap-3 h-full">
               <div className="flex items-center gap-3">
-                <ProfileBadge src={userAvatar} maxWidth={26} />
+                <ProfileBadge
+                  src={user?.profile_image || "/default-profile-image.svg"}
+                  maxWidth={26}
+                />
                 <p>{user?.username}</p>
               </div>
               <textarea

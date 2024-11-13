@@ -19,7 +19,7 @@ export default function AsideMenu() {
   const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
-  const { userAvatar, fetchUser } = useUser();
+  const { fetchUser, user } = useUser();
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
@@ -50,7 +50,6 @@ export default function AsideMenu() {
     if (isCreateModalOpen) {
       setIsCreateModalOpen(false);
     }
-    // Добавляем событие для закрытия модального окна с постом
     const event = new CustomEvent("closePostModal");
     window.dispatchEvent(event);
   };
@@ -63,10 +62,7 @@ export default function AsideMenu() {
           className="fixed inset-0 bg-black opacity-65 z-30"
         ></div>
       )}
-      <CreatePostModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-      />
+      <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <aside
         onClick={handleAsideClick}
         className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-50"
@@ -120,7 +116,7 @@ export default function AsideMenu() {
             </li>
           ))}
           <Link href={"/profile"} className="flex gap-4 items-center pt-[59px]">
-            <ProfileBadge src={userAvatar} />
+            <ProfileBadge src={user?.profile_image || "/default-profile-image.svg"} />
             <p className={`${isProfilePage ? "font-bold" : "font-normal"}`}>Profile</p>
           </Link>
         </nav>

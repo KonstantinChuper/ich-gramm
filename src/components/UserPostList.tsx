@@ -25,6 +25,17 @@ export default function UserPostList() {
     };
   }, []);
 
+  useEffect(() => {
+    const handlePostCreated = () => {
+      fetchUserPosts();
+    };
+
+    window.addEventListener("postCreated", handlePostCreated);
+    return () => {
+      window.removeEventListener("postCreated", handlePostCreated);
+    };
+  }, [fetchUserPosts]);
+
   if (isLoading) {
     return <PictureLoading />;
   }

@@ -4,11 +4,12 @@ import Image from "next/image";
 import ProfileBadge from "./ProfileBadge";
 import { Post } from "@/types/Post";
 import menuBtn from "@/assets/Menu-buttons.svg";
-import { getTimeAgo, parseImage } from "@/utils/helpers";
+import { getTimeAgo } from "@/utils/helpers";
 import PostForm from "./PostForm";
 import CommentList from "./CommentList";
 import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
+import { useRouter } from "next/navigation";
 
 interface ModalPostProps {
   post: Post;
@@ -24,8 +25,8 @@ interface PostAuthor {
 export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   const [postAuthor, setPostAuthor] = useState<PostAuthor | null>(null);
   const { request } = useAxios();
+  const router = useRouter();
 
-  // Получаем данные автора поста
   useEffect(() => {
     const fetchPostAuthor = async () => {
       const { data } = await request<PostAuthor>({
@@ -39,6 +40,11 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
 
     fetchPostAuthor();
   }, [post.user_id]);
+
+  const handleUserClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/profile/${post.user_id}`);
+  };
 
   if (!isOpen) return null;
 
@@ -61,10 +67,10 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
         {/* Right side - post information */}
         <div className="flex flex-col border-l border-borderColor max-w-[433px] flex-1">
           <div className="p-4 border-b border-borderColor flex justify-between">
-            <div className="flex items-center gap-3">
-              <ProfileBadge 
-                src={postAuthor?.profile_image ? parseImage(postAuthor.profile_image) : "/default-profile-image.svg"} 
-                maxWidth={32} 
+            <div onClick={handleUserClick} className="flex items-center gap-3 cursor-pointer">
+              <ProfileBadge
+                src={postAuthor?.profile_image || "/default-profile-image.svg"}
+                maxWidth={32}
               />
               <span className="font-semibold">{postAuthor?.username}</span>
             </div>
@@ -77,9 +83,9 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           {post.caption && (
             <div className="p-5">
               <div className="flex gap-3">
-                <ProfileBadge 
-                  src={postAuthor?.profile_image ? parseImage(postAuthor.profile_image) : "/default-profile-image.svg"} 
-                  maxWidth={32} 
+                <ProfileBadge
+                  src={postAuthor?.profile_image || "/default-profile-image.svg"}
+                  maxWidth={32}
                 />
                 <div className="flex-1 min-w-0">
                   <span className="font-semibold mr-2 text-base">{postAuthor?.username}</span>
@@ -93,7 +99,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           )}
 
           {/* Post comments */}
-          <div className="px-5 pb-5 pt-2 border-t border-borderColor flex-1 overflow-y-auto">
+          <div className="px-5 pb-5 pt-2 border-borderColor flex-1 overflow-y-auto">
             <CommentList postId={post._id} />
           </div>
 

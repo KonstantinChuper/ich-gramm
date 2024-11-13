@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useAxios } from "./useAxios";
 import { isTokenExpired } from "@/utils/tokenUtils";
 import { useRouter } from "next/navigation";
-import { parseImage } from "@/utils/helpers";
 import { User } from "@/types/User";
 
 interface UserResponse {
@@ -108,21 +107,12 @@ export default function useUser(userId?: string) {
     fetchUser();
   }, [userId]);
 
-  // const userAvatar = parseImage(user?.profile_image || "/default-profile-image.svg");
-
-  useEffect(() => {
-    if (user?.profile_image) {
-      setUserAvatar(parseImage(user.profile_image));
-    }
-  }, [user?.profile_image]);
-
   return {
     user,
     isLoading,
     error,
     isCurrentUser,
     fetchUser,
-    updateUser,
-    userAvatar,
+    updateUser
   };
 }

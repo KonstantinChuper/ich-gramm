@@ -21,6 +21,11 @@ export default function PostForm({ postId }: PostFormProps) {
       await addComment(comment.trim());
       await fetchComments();
       setComment("");
+      window.dispatchEvent(
+        new CustomEvent("commentsUpdated", {
+          detail: { postId },
+        })
+      );
     } catch (error) {
       console.error("Error adding comment:", error);
     }

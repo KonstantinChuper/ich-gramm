@@ -8,13 +8,19 @@ import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
 import WordCounter from "@/components/WordCounter";
 
+interface FormData {
+  username: string;
+  full_name: string;
+  bio: string;
+}
+
 export default function EditProfile() {
-  const { user, isLoading, error, updateUser, userAvatar } = useUser();
+  const { user, isLoading, error, updateUser } = useUser();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showNotFound, setShowNotFound] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     username: "",
     full_name: "",
     bio: "",
@@ -120,7 +126,7 @@ export default function EditProfile() {
         <div className="mt-11 p-4 bg-inputColor rounded-[20px]">
           <div className="flex items-center gap-4">
             <div className="flex-shrink-0">
-              <ProfileBadge maxWidth={56} src={previewImage || userAvatar} />
+              <ProfileBadge maxWidth={56} src={user?.profile_image || previewImage} />
             </div>
             <div className="flex-grow min-w-0">
               <p className="font-bold break-words">{user?.username}</p>
@@ -167,10 +173,7 @@ export default function EditProfile() {
             onChange={handleTextChange}
             className="mt-[7px] p-3 border border-borderColor w-full rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-500 resize-none"
           />
-          <WordCounter
-            currentLength={formData.bio.length}
-            maxLength={maxWords}
-          />
+          <WordCounter currentLength={formData.bio.length} maxLength={maxWords} />
         </div>
         <button
           type="submit"

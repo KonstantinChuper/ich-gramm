@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import ProfileBadge from "./ProfileBadge";
-import useUser from "@/hooks/useUser";
+import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spiner";
 import ActionButtons from "@/components/ActionButtons";
@@ -13,12 +13,12 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ userId }: ProfileHeaderProps) {
-  const { user, isLoading, error, isCurrentUser, userAvatar } = useUser(userId);
+  const { user, isLoading, error, isCurrentUser } = useUser(userId);
   const router = useRouter();
 
-  console.log('ProfileHeader userId:', userId);
-  console.log('Current user:', user);
-  console.log('Is current user:', isCurrentUser);
+  console.log("ProfileHeader userId:", userId);
+  console.log("Current user:", user);
+  console.log("Is current user:", isCurrentUser);
   console.log(user);
 
   const userStats = useMemo(() => {
@@ -69,7 +69,7 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
   return (
     <div className="pt-[38px] flex lg:gap-[95px] gap-5">
       <ProfileBadge
-        src={userAvatar || "/default-profile-image.svg"}
+        src={user.profile_image || "/default-profile-image.svg"}
         maxWidth={150}
         maxHeight={150}
         className="shrink-0"

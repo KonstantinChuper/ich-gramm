@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useAxios } from "./useAxios";
 import { Comment } from "@/types/Comments";
 import useUser from "./useUserAxios";
-import { parseImage } from "@/utils/helpers";
 
 interface UseCommentsProps {
   postId: string;
@@ -36,7 +35,7 @@ interface UserFromServer {
 export default function useComments({ postId }: UseCommentsProps): UseCommentsReturn {
   const [comments, setComments] = useState<Comment[]>([]);
   const { request, isLoading, error } = useAxios();
-  const { user: currentUser, userAvatar } = useUser();
+  const { user: currentUser } = useUser();
 
   const fetchUserData = async (userId: string): Promise<UserFromServer | null> => {
     const { data } = await request<UserFromServer>({
@@ -67,7 +66,7 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
           if (comment.user_id === currentUser?._id) {
             userData = {
               username: currentUser.username,
-              avatar_url: parseImage(userAvatar),
+              avatar_url: currentUser.profile_image || "/default-profile-image.svg",
             };
           } else {
             if (!userDataCache.has(comment.user_id)) {
@@ -76,7 +75,7 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
                 userDataCache.set(comment.user_id, {
                   username: fetchedUser.username,
                   avatar_url:
-                    parseImage(fetchedUser.profile_image || "") || "/default-profile-image.svg",
+                    fetchedUser.profile_image || "/default-profile-image.svg",
                 });
               }
             }
@@ -135,7 +134,7 @@ export default function useComments({ postId }: UseCommentsProps): UseCommentsRe
           created_at: data.created_at || new Date().toISOString(),
           user: {
             username: currentUser.username,
-            avatar_url: userAvatar || "/default-profile-image.svg",
+            avatar_url: currentUser.profile_image || "/default-profile-image.svg",
           },
         };
 
