@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAxios } from "./useAxios";
 import { Comment } from "@/types/Comments";
-import useUser from "./useUserAxios";
+import useUser from "./useUser";
 
 interface UseCommentsProps {
   postId: string;

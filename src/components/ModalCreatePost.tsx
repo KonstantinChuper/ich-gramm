@@ -3,7 +3,7 @@
 import { useRef, useState, DragEvent } from "react";
 import { useAxios } from "@/hooks/useAxios";
 import Image from "next/image";
-import useUser from "@/hooks/useUserAxios";
+import useUser from "@/hooks/useUser";
 import ProfileBadge from "./ProfileBadge";
 import WordCounter from "./WordCounter";
 import EmojiPicker from "./EmojiPicker";

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
 import LikeCounter from "./LikeCounter";
+import useUser from "@/hooks/useUser";
 
 interface ModalPostProps {
   post: Post;
@@ -25,8 +26,11 @@ interface PostAuthor {
 
 export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   const [postAuthor, setPostAuthor] = useState<PostAuthor | null>(null);
+  const { isCurrentUser } = useUser();
   const { request } = useAxios();
   const router = useRouter();
+
+  console.log(isCurrentUser);
 
   useEffect(() => {
     const fetchPostAuthor = async () => {
@@ -44,7 +48,11 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
 
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push(`/profile/${post.user_id}`);
+    if (isCurrentUser) {
+      router.push("/profile/edit");
+    } else {
+      router.push(`/profile/${post.user_id}`);
+    }
   };
 
   if (!isOpen) return null;
@@ -104,9 +112,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
 
           <div className="ml-[14px] pb-3">
             <LikeCounter postId={post._id} />
-            <p className="text-[10px] text-textGrayColor mt-2">
-              {getTimeAgo(post.created_at)}
-            </p>
+            <p className="text-[10px] text-textGrayColor mt-2">{getTimeAgo(post.created_at)}</p>
           </div>
 
           <div className="flex-0 relative z-50">

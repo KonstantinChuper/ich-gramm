@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ProfileBadge from "./ProfileBadge";
 import Image from "next/image";
-import useUser from "@/hooks/useUserAxios";
+import useUser from "@/hooks/useUser";
 import type { Post } from "@/types/Post";
 import { getTimeAgo } from "@/utils/helpers";
 import { useRouter } from "next/navigation";

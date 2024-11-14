@@ -13,7 +13,6 @@ interface UserResponse {
 export default function useUser(userId?: string) {
   const [user, setUser] = useState<User | null>(null);
   const [isCurrentUser, setIsCurrentUser] = useState(true);
-  const [userAvatar, setUserAvatar] = useState("/default-profile-image.svg");
   const { request, isLoading, error } = useAxios();
   const router = useRouter();
 

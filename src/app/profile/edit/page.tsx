@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Container from "@/components/Container";
 import ProfileBadge from "@/components/ProfileBadge";
 import Spiner from "@/components/Spiner";
-import useUser from "@/hooks/useUserAxios";
+import useUser from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import WordCounter from "@/components/WordCounter";
 

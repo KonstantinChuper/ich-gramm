@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo } from "react";
 import ProfileBadge from "./ProfileBadge";
-import useUser from "@/hooks/useUserAxios";
+import useUser from "@/hooks/useUser";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spiner";
 import ActionButtons from "@/components/ActionButtons";

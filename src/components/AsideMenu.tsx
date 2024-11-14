@@ -10,7 +10,7 @@ import ProfileBadge from "./ProfileBadge";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
-import useUser from "@/hooks/useUserAxios";
+import useUser from "@/hooks/useUser";
 import CreatePostModal from "./ModalCreatePost";
 
 export default function AsideMenu() {
