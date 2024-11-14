@@ -30,7 +30,7 @@ export default function EmojiPicker({ onEmojiSelect }: EmojiPickerProps) {
         className="p-2 hover:bg-gray-100 rounded-full"
         type="button"
       >
-        <Image src="/icons/emoji.svg" alt="emoji" width={20} height={20} />
+        <Image src="/icons/emoji.svg" alt="emoji" width={20} height={20} className="min-w-[20px] min-h-[20px]" />
       </button>
 
       {isOpen && (

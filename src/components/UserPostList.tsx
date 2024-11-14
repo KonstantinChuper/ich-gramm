@@ -1,15 +1,14 @@
 "use client";
 
-import usePost from "@/hooks/usePost";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect  } from "react";
 import ModalPost from "./ModalPost";
-import { Post } from "@/types/Post";
+import { usePostContext } from "@/contexts/PostContext";
 import PictureLoading from "./PictureLoading";
 
 export default function UserPostList() {
-  const { posts, isLoading, error, fetchUserPosts } = usePost();
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const { posts, isLoading, error, selectedPost, setSelectedPost, fetchUserPosts } =
+    usePostContext();
 
   useEffect(() => {
     fetchUserPosts();

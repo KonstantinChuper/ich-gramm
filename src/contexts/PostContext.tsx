@@ -14,6 +14,7 @@ interface PostContextType {
   getPostLikes: (postId: string) => number;
   getIsPostLiked: (postId: string) => boolean;
   fetchFeedPosts: () => Promise<void>;
+  fetchUserPosts: () => Promise<void>;
 }
 
 const initialContext: PostContextType = {
@@ -26,12 +27,20 @@ const initialContext: PostContextType = {
   getPostLikes: () => 0,
   getIsPostLiked: () => false,
   fetchFeedPosts: async () => {},
+  fetchUserPosts: async () => {},
 };
 
 const PostContext = createContext<PostContextType>(initialContext);
 
 export function PostProvider({ children }: { children: React.ReactNode }) {
-  const { posts, currentPost: selectedPost, isLoading, error, fetchFeedPosts } = usePost();
+  const {
+    posts,
+    currentPost: selectedPost,
+    isLoading,
+    error,
+    fetchFeedPosts,
+    fetchUserPosts,
+  } = usePost();
   const [localPosts, setLocalPosts] = useState<Post[]>(posts);
   const [localSelectedPost, setLocalSelectedPost] = useState<Post | null>(selectedPost);
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
@@ -82,6 +91,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
         getPostLikes,
         getIsPostLiked,
         fetchFeedPosts,
+        fetchUserPosts,
       }}
     >
       {children}

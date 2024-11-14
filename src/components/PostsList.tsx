@@ -40,7 +40,7 @@ export default function PostsList() {
   return (
     <>
       <div className="space-y-8">
-        <div className="gap-16 flex-nowrap grid grid-cols-1 lg:grid-cols-2">
+        <div className="gap-16 flex-nowrap grid grid-cols-1">
           {posts.map((post) => (
             <div key={post._id} onClick={() => setSelectedPost(post)} className="cursor-pointer">
               <Post post={post} />

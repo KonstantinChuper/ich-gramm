@@ -58,7 +58,7 @@ export default function Post({ post }: PostProps) {
         </div>
       </div>
 
-      <Image src={post.image_url} alt="post image" width={454} height={555} className="pt-[12px]" />
+      <Image src={post.image_url} alt="post image" width={550} height={555} className="pt-[12px]" />
 
       <div className="pt-[12px]">
         <LikeCounter postId={post._id} />
