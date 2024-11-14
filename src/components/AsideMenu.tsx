@@ -12,7 +12,6 @@ import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
 import useUser from "@/hooks/useUserAxios";
 import CreatePostModal from "./ModalCreatePost";
-import ThemeToggle from "./ThemeToggle";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -66,7 +65,7 @@ export default function AsideMenu() {
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <aside
         onClick={handleAsideClick}
-        className="bg-white fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border border-r-borderColor border-b-0 overflow-auto z-50 bg-primary"
+        className="fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor border-b-0 overflow-auto z-50 bg-primary"
       >
         <nav className="space-y-7 fixed">
           <Link href={"/"} className="max-w-[94px] max-h-[50px]">

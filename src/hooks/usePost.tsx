@@ -28,60 +28,60 @@ export default function usePost() {
     return token;
   };
 
-   const fetchUserPosts = useCallback(async () => {
-     const token = checkToken();
-     if (!token) return;
+  const fetchUserPosts = useCallback(async () => {
+    const token = checkToken();
+    if (!token) return;
 
-     try {
-       const { data, error } = await request<{ data: Post[] }>({
-         endpoint: "/api/post/all",
-         method: "GET",
-         headers: {
-           Authorization: `Bearer ${token}`,
-         },
-       });
+    try {
+      const { data, error } = await request<{ data: Post[] }>({
+        endpoint: "/api/post/all",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-       if (error) throw new Error(error);
+      if (error) throw new Error(error);
 
-       if (data && "data" in data) {
-         setPosts(data.data);
-       } else if (Array.isArray(data)) {
-         setPosts(data);
-       }
-     } catch (error) {
-       console.error("Error fetching user posts:", error);
-     }
-   }, [request]);
+      if (data && "data" in data) {
+        setPosts(data.data);
+      } else if (Array.isArray(data)) {
+        setPosts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+    }
+  }, [request]);
 
-   const fetchUserPostsById = useCallback(
-     async (userId: string) => {
-       const token = checkToken();
-       if (!token) return;
+  const fetchUserPostsById = useCallback(
+    async (userId: string) => {
+      const token = checkToken();
+      if (!token) return;
 
-       try {
-         const { data, error } = await request<{ data: Post[] }>({
-           endpoint: `/api/post/user/${userId}`,
-           method: "GET",
-           headers: {
-             Authorization: `Bearer ${token}`,
-           },
-         });
+      try {
+        const { data, error } = await request<{ data: Post[] }>({
+          endpoint: `/api/post/user/${userId}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-         console.log("Response data:", data);
+        console.log("Response data:", data);
 
-         if (error) throw new Error(error);
+        if (error) throw new Error(error);
 
-         if (data && "data" in data) {
-           setPosts(data.data);
-         } else if (Array.isArray(data)) {
-           setPosts(data);
-         }
-       } catch (error) {
-         console.error("Error fetching user posts:", error);
-       }
-     },
-     [request]
-   );
+        if (data && "data" in data) {
+          setPosts(data.data);
+        } else if (Array.isArray(data)) {
+          setPosts(data);
+        }
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+      }
+    },
+    [request]
+  );
 
   // Создание нового поста
   const createPost = useCallback(
@@ -211,6 +211,32 @@ export default function usePost() {
     }
   }, [request]);
 
+  // Получение постов для explore
+  const fetchExplorePosts = useCallback(async () => {
+    const token = checkToken();
+    if (!token) return;
+
+    try {
+      const { data, error } = await request<PostsResponse>({
+        endpoint: "/api/post/feed",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (data?.posts) {
+        setPosts(data.posts);
+      }
+    } catch (error) {
+      console.error("Error fetching feed:", error);
+    }
+  }, [request]);
+
   return {
     posts,
     currentPost,
@@ -222,5 +248,6 @@ export default function usePost() {
     updatePost,
     deletePost,
     fetchFeedPosts,
+    fetchExplorePosts,
   };
 }

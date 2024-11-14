@@ -10,7 +10,7 @@ export default function UserProfile() {
   const id = params.id as string;
 
   return (
-    <Container>
+    <Container maxWidth="850px" className="!mr-0">
       <ProfileHeader userId={id} />
       <UserPostListById userId={id} />
     </Container>

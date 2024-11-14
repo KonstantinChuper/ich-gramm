@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import ProfileBadge from "./ProfileBadge";
 import useUser from "@/hooks/useUserAxios";
 import { useRouter } from "next/navigation";
@@ -13,13 +13,8 @@ interface ProfileHeaderProps {
 }
 
 export default function ProfileHeader({ userId }: ProfileHeaderProps) {
-  const { user, isLoading, error, isCurrentUser } = useUser(userId);
+  const { user, isLoading, error, isCurrentUser, fetchUser } = useUser(userId);
   const router = useRouter();
-
-  console.log("ProfileHeader userId:", userId);
-  console.log("Current user:", user);
-  console.log("Is current user:", isCurrentUser);
-  console.log(user);
 
   const userStats = useMemo(() => {
     if (!user) return [];
@@ -49,6 +44,15 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
     // Логика отправки сообщения
     console.log("Message clicked");
   };
+
+  useEffect(() => {
+    const handlePostCreated = () => {
+      fetchUser();
+    };
+
+    window.addEventListener("postCreated", handlePostCreated);
+    return () => window.removeEventListener("postCreated", handlePostCreated);
+  }, [fetchUser]);
 
   if (isLoading) {
     return (

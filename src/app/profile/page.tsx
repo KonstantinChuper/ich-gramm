@@ -5,9 +5,9 @@ import UserPostList from "@/components/UserPostList";
 export default function Profile() {
 
   return (
-    <Container>
-      <ProfileHeader/>
-      <UserPostList/>
+    <Container maxWidth="850px" className="!mr-0">
+      <ProfileHeader />
+      <UserPostList />
     </Container>
   );
 }
