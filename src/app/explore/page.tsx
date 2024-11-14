@@ -42,6 +42,7 @@ export default function ExplorePage() {
     <Container maxWidth="935px" className="!mr-0">
       <div className="grid grid-cols-3 auto-rows-[293px] gap-1 my-20">
         {posts.map((post, index) => {
+
           const isLarge = (index + 1) % 3 === 0;
 
           return (

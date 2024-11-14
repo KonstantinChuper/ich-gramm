@@ -5,6 +5,8 @@ import { useEffect  } from "react";
 import ModalPost from "./ModalPost";
 import { usePostContext } from "@/contexts/PostContext";
 import PictureLoading from "./PictureLoading";
+import LikeIcon from "./icons/LikeIcon";
+import MessageIcon from "./icons/MessageIcon";
 
 export default function UserPostList() {
   const { posts, isLoading, error, selectedPost, setSelectedPost, fetchUserPosts } =
@@ -53,16 +55,38 @@ export default function UserPostList() {
         {posts.map((post) => (
           <div
             key={post._id}
-            className="cursor-pointer relative aspect-square"
+            className="cursor-pointer relative group aspect-square"
             onClick={() => setSelectedPost(post)}
           >
-            <Image
+            <div className="absolute inset-0">
+              <Image
+                src={post.image_url}
+                alt={post.caption || "Post image"}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 33vw, (max-width: 1200px) 33vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-200" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="flex gap-8 text-white font-semibold">
+                  <div className="flex items-center gap-2">
+                    <LikeIcon />
+                    <span>{post.likes_count || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <MessageIcon />
+                    <span>{post.comments_count || 0}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* <Image
               src={post.image_url}
               alt={post.caption || "post image"}
               width={350}
               height={350}
               className="object-cover aspect-square"
-            />
+            /> */}
           </div>
         ))}
       </div>
