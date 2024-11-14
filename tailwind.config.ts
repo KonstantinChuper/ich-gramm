@@ -9,6 +9,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     flowbite.content(),
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -18,6 +19,14 @@ const config: Config = {
         textGrayColor: "var(--text-gray-color)",
         inputColor: "var(--input-bg)",
         bgColorLight: "var(--bg-color-light)",
+        background: "var(--bg-color)",
+      },
+      backgroundColor: {
+        primary: "var(--bg-color)",
+        secondary: "var(--bg-color-light)",
+      },
+      textColor: {
+        primary: "var(--text-color)",
       },
       backgroundImage: {
         storyGradient:
@@ -40,10 +49,6 @@ const config: Config = {
           "&:hover": {
             opacity: "0.9",
           },
-          // "@media (min-width: 768px)": {
-          //   padding: "10px 24px",
-          //   fontSize: "18px",
-          // },
         },
         ".btn-primary": {
           backgroundColor: "#0095F6",
@@ -57,11 +62,19 @@ const config: Config = {
     }),
     require("flowbite/plugin")({
       theme: {
+        darkMode: true,
         extend: {
           colors: {
             primary: {
               ring: "var(--text-gray-color)",
               border: "var(--text-gray-color)",
+            },
+            // Добавляем цвета для темной темы
+            dark: {
+              primary: "var(--dark-primary)",
+              secondary: "var(--dark-secondary)",
+              background: "var(--dark-background)",
+              text: "var(--dark-text)",
             },
           },
         },

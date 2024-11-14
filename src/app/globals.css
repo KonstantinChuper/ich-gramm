@@ -2,28 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  background-color: #ffffff;
-}
-
-:root {
-  --primary-color: #0095f6;
-  --border-color: #dbdbdb;
-  --text-gray-color: #737373;
-  --link-color: #00376b;
-  --input-bg: #efefef;
-  --bg-color-light: #fafafa;
-  --stories-gradient: linear-gradient(
-    204deg,
-    rgba(131, 58, 180, 1) 0%,
-    rgba(253, 29, 29, 1) 50%,
-    rgba(252, 176, 69, 1) 100%
-  );
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --stories-gradient: linear-gradient(
+      204deg,
+      rgba(131, 58, 180, 1) 0%,
+      rgba(253, 29, 29, 1) 50%,
+      rgba(252, 176, 69, 1) 100%
+    );
+
+    /* Светлая тема */
+    --primary-color: #0095F6;
+    --border-color: #DBDBDB;
+    --link-color: #00376B;
+    --text-gray-color: #737373;
+    --input-bg: #FAFAFA;
+    --bg-color-light: #FFFFFF;
+    --bg-color: #FFFFFF;
+  }
+
+  .dark {
+    /* Темная тема */
+    --primary-color: #0095F6;
+    --border-color: #363636;
+    --link-color: #E4E6EB;
+    --text-gray-color: #A8A8A8;
+    --input-bg: #262626;
+    --bg-color-light: #262626;
+    --bg-color: #121212;
+  }
+
+  html, body {
+    @apply bg-primary;
+  }
+
+  .dark html, .dark body {
+    @apply bg-primary;
   }
 }
