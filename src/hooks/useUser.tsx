@@ -12,6 +12,7 @@ interface UserResponse {
 
 export default function useUser(userId?: string) {
   const [user, setUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isCurrentUser, setIsCurrentUser] = useState(true);
   const { request, isLoading, error } = useAxios();
   const router = useRouter();
@@ -31,6 +32,38 @@ export default function useUser(userId?: string) {
 
     return token;
   };
+
+  const getCurrentUser = useCallback(async () => {
+    const token = checkAndGetToken();
+    if (!token) return null;
+
+    try {
+      const { data, error } = await request<UserResponse | User>({
+        endpoint: "/api/user/current",
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (!data) return null;
+
+      const userData = "user" in data ? data.user : data;
+
+      if (userData && "_id" in userData) {
+        setCurrentUser(userData);
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      return null;
+    }
+  }, [request]);
 
   const fetchUser = useCallback(async () => {
     const token = checkAndGetToken();
@@ -112,6 +145,7 @@ export default function useUser(userId?: string) {
     error,
     isCurrentUser,
     fetchUser,
-    updateUser
+    updateUser,
+    getCurrentUser,
   };
 }

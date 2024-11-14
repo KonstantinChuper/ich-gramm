@@ -1,5 +1,6 @@
 interface ActionButtonsProps {
   isCurrentUser: boolean;
+  isFollowing?: boolean;
   onEditProfile: () => void;
   onFollow?: () => void;
   onMessage?: () => void;
@@ -8,6 +9,7 @@ interface ActionButtonsProps {
 
 export default function ActionButtons({
   isCurrentUser,
+  isFollowing,
   onEditProfile,
   onLogout,
   onFollow,
@@ -36,9 +38,11 @@ export default function ActionButtons({
     <div className="flex gap-3">
       <button
         onClick={onFollow}
-        className="btn btn-primary px-10 py-1 border hover:opacity-90 transition-opacity"
+        className={`btn px-10 py-1 border transition-colors ${
+          isFollowing ? "btn-secondary hover:bg-gray-100" : "btn-primary hover:opacity-90"
+        }`}
       >
-        Follow
+        {isFollowing ? "Unfollow" : "Follow"}
       </button>
       <button
         onClick={onMessage}

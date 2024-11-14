@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Spinner from "@/components/Spiner";
 import ActionButtons from "@/components/ActionButtons";
 import StatsItem from "@/components/StatsItems";
+import { useFollow } from "@/hooks/useFollow";
 
 interface ProfileHeaderProps {
   userId?: string;
@@ -14,6 +15,10 @@ interface ProfileHeaderProps {
 
 export default function ProfileHeader({ userId }: ProfileHeaderProps) {
   const { user, isLoading, error, isCurrentUser, fetchUser } = useUser(userId);
+  const { isFollowing, checkFollowStatus, handleFollow } = useFollow({
+    targetUserId: userId,
+    onFollowChange: fetchUser,
+  });
   const router = useRouter();
 
   const userStats = useMemo(() => {
@@ -35,11 +40,6 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
     router.push("/login");
   };
 
-  const handleFollow = () => {
-    // Логика подписки
-    console.log("Follow clicked");
-  };
-
   const handleMessage = () => {
     // Логика отправки сообщения
     console.log("Message clicked");
@@ -49,10 +49,15 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
     const handlePostCreated = () => {
       fetchUser();
     };
-
     window.addEventListener("postCreated", handlePostCreated);
     return () => window.removeEventListener("postCreated", handlePostCreated);
   }, [fetchUser]);
+
+  useEffect(() => {
+    if (!isCurrentUser && userId) {
+      checkFollowStatus();
+    }
+  }, [isCurrentUser, userId]);
 
   if (isLoading) {
     return (
@@ -84,6 +89,7 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
           <h1 className="text-xl font-semibold">{user.username}</h1>
           <ActionButtons
             isCurrentUser={isCurrentUser}
+            isFollowing={isFollowing}
             onEditProfile={handleEditProfile}
             onFollow={handleFollow}
             onMessage={handleMessage}
