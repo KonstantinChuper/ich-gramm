@@ -15,13 +15,11 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const { request } = useAxios();
 
-  // Загрузка недавних чатов из localStorage
   useEffect(() => {
     const recentChats = JSON.parse(localStorage.getItem("recentChats") || "[]");
     setRecentUsers(recentChats);
   }, []);
 
-  // Загрузка всех пользователей
   useEffect(() => {
     const fetchUsers = async () => {
       const { data } = await request<User[]>({
@@ -29,7 +27,6 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
         method: "GET",
       });
       if (data) {
-        // Фильтруем пользователей, которые уже есть в недавних чатах
         const filteredUsers = data.filter(
           (user) => !recentUsers.some((recentUser) => recentUser._id === user._id)
         );
@@ -41,7 +38,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
   }, [recentUsers]);
 
   return (
-    <div className="overflow-y-auto">
+    <div className="bg-primary">
       {/* Недавние чаты */}
       {recentUsers.length > 0 && (
         <>
@@ -51,7 +48,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
               key={user._id}
               onClick={() => onSelectUser(user._id)}
               className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
-                ${selectedUserId === user._id ? "bg-hover" : ""}`}
+                ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
             >
               <ProfileBadge src={user.profile_image} maxWidth={40} />
               <div>
@@ -81,7 +78,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
             setRecentUsers(updatedRecentUsers as User[]);
           }}
           className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
-            ${selectedUserId === user._id ? "bg-hover" : ""}`}
+            ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
         >
           <ProfileBadge src={user.profile_image} maxWidth={40} />
           <div>

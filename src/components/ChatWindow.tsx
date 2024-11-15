@@ -5,6 +5,7 @@ import useMessage from "@/hooks/useMessage";
 import useUser from "@/hooks/useUser";
 import ProfileBadge from "@/components/ProfileBadge";
 import { useAxios } from "@/hooks/useAxios";
+import Spiner from "./Spiner";
 
 interface ChatWindowProps {
   targetUserId: string;
@@ -19,7 +20,7 @@ interface TargetUser {
 export default function ChatWindow({ targetUserId }: ChatWindowProps) {
   const [newMessage, setNewMessage] = useState("");
   const [targetUser, setTargetUser] = useState<TargetUser | null>(null);
-  const { messages, sendMessage, isLoading } = useMessage(targetUserId);
+  const { messages, sendMessage, isLoading, error } = useMessage(targetUserId);
   const { user: currentUser } = useUser();
   const { request } = useAxios();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,11 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
   };
 
   if (isLoading) {
-    return <div className="h-full flex items-center justify-center">Loading...</div>;
+    return <Spiner />;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center p-4">{error}</div>;
   }
 
   return (
@@ -71,10 +76,10 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
               className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[70%] p-3 rounded-2xl ${
+                className={`max-w-[70%] py-4 px-5 rounded-2xl ${
                   isCurrentUser
-                    ? "bg-blue-500 text-white rounded-tr-none"
-                    : "bg-gray-200 rounded-tl-none"
+                    ? "bg-[#4D00FF] text-white rounded-tr-none"
+                    : "bg-bgColorSecondary rounded-tl-none"
                 }`}
               >
                 <p>{message.message_text}</p>
@@ -93,14 +98,14 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSend()}
-            placeholder="Напишите сообщение..."
-            className="flex-1 p-2 rounded-lg border border-borderColor bg-primary focus:outline-none focus:border-blue-500"
+            placeholder="Write a message..."
+            className="flex-1 p-2 rounded-2xl border border-borderColor bg-inputColor !ring-0 !outline-none focus:!border-none focus:!outline-none focus:!ring-2 focus:!ring-zinc-500 dark:!bg-inputColor"
           />
           <button
             onClick={handleSend}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-10 py-2 bg-primaryColor text-white rounded-2xl hover:opacity-80 transition-colors"
           >
-            Отправить
+            Send
           </button>
         </div>
       </div>

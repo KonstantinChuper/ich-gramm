@@ -20,6 +20,7 @@ const config: Config = {
         inputColor: "var(--input-bg)",
         bgColorLight: "var(--bg-color-light)",
         background: "var(--bg-color)",
+        bgColorSecondary: "var(--bg-color-secondary)",
       },
       backgroundColor: {
         primary: "var(--bg-color)",

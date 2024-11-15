@@ -19,13 +19,13 @@ export default function Input({ type, placeholder, value, name, onChange }: Inpu
       type={type || "text"}
       value={value}
       onChange={onChange}
-      className="!bg-[#FAFAFA] 
-    [&>label]:!bg-[#FAFAFA] focus:!border-primaryColor 
-    [&_.peer-focus~label]:!bg-[#FAFAFA]
-    [&_.peer~label]:!bg-[#FAFAFA]
-    [&_.peer-focus:not(:placeholder-shown)~label]:!bg-[#FAFAFA]
-    [&_.peer:not(:placeholder-shown)~label]:!bg-[#FAFAFA] [&>input:-webkit-autofill]:!bg-[#FAFAFA]
-    [&>input:-webkit-autofill~label]:!bg-[#FAFAFA]
+      className="!bg-inputColor 
+      [&>label]:!bg-inputColor focus:!border-primaryColor 
+      [&_.peer-focus~label]:!bg-inputColor
+      [&_.peer~label]:!bg-inputColor
+      [&_.peer-focus:not(:placeholder-shown)~label]:!bg-inputColor
+      [&_.peer:not(:placeholder-shown)~label]:!bg-inputColor [& >input:-webkit-autofill]:!bg-inputColor
+      [&>input:-webkit-autofill~label]:!bg-inputColor
       [&>input:-webkit-autofill]:![transition-delay:9999s]
       [&>input:-webkit-autofill]:![transition-property:background-color]"
       style={{

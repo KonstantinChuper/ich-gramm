@@ -15,123 +15,91 @@ export const useMessage = (targetUserId?: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { user } = useUser();
+  const { user: currentUser } = useUser();
 
   // Инициализация сокета
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token || !targetUserId) return;
 
     const newSocket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000", {
       auth: { token },
     });
 
-    setSocket(newSocket);
+    newSocket.on("connect", () => {
+      console.log("Socket connected");
+      // Присоединяемся к комнате при подключении
+      const roomId = [currentUser?._id, targetUserId].sort().join("_");
+      newSocket.emit("joinRoom", { targetUserId });
+    });
 
-    // Обработка ошибок подключения
     newSocket.on("connect_error", (err) => {
       console.error("Socket connection error:", err);
-      setError("Ошибка подключения к серверу");
+      setError("Connection error");
     });
+
+    setSocket(newSocket);
 
     return () => {
-      newSocket.close();
+      newSocket.disconnect();
     };
-  }, []);
+  }, [targetUserId, currentUser?._id]);
 
-  // Подключение к комнате и загрузка истории сообщений
+  // Загрузка сообщений и обработка новых
   useEffect(() => {
-    if (!socket || !user?._id || !targetUserId) return;
+    if (!socket) return;
 
     setIsLoading(true);
-    setError(null);
 
-    // Создаем ID комнаты из ID пользователей (сортируем для консистентности)
-    const roomId = [user._id, targetUserId].sort().join("-");
+    // Загрузка истории сообщений
+    socket.emit("loadMessages", { targetUserId });
 
-    // Присоединяемся к комнате
-    socket.emit("joinRoom", roomId);
-
-    // Запрашиваем историю сообщений
-    socket.emit("loadMessages", {
-      userId: user._id,
-      targetUserId,
-    });
-
-    // Слушаем загруженные сообщения
+    // Обработчики событий
     socket.on("loadMessages", (loadedMessages: Message[]) => {
       setMessages(loadedMessages);
       setIsLoading(false);
     });
 
-    // Слушаем новые сообщения
     socket.on("receiveMessage", (newMessage: Message) => {
       setMessages((prev) => [...prev, newMessage]);
     });
 
-    // Слушаем ошибки
     socket.on("error", (err) => {
-      console.error("Socket error:", err);
-      setError("Произошла ошибка");
+      setError(err.message);
       setIsLoading(false);
     });
 
     return () => {
-      // Покидаем комнату при размонтировании
-      socket.emit("leaveRoom", roomId);
-
-      // Отписываемся от всех событий
       socket.off("loadMessages");
       socket.off("receiveMessage");
       socket.off("error");
     };
-  }, [socket, user?._id, targetUserId]);
+  }, [socket, targetUserId]);
 
   // Отправка сообщения
   const sendMessage = useCallback(
-    async (messageText: string) => {
-      if (!socket || !user?._id || !targetUserId) {
-        setError("Не удалось отправить сообщение");
+    (messageText: string) => {
+      if (!socket || !currentUser?._id || !targetUserId || !messageText.trim()) {
         return;
       }
 
-      if (!messageText.trim()) {
-        return;
-      }
+      const roomId = [currentUser._id, targetUserId].sort().join("_");
 
-      try {
-        const roomId = [user._id, targetUserId].sort().join("-");
-
-        socket.emit("sendMessage", {
-          userId: user._id,
-          targetUserId,
-          messageText: messageText.trim(),
-          roomId,
-        });
-      } catch (err) {
-        console.error("Error sending message:", err);
-        setError("Ошибка при отправке сообщения");
-      }
+      socket.emit("sendMessage", {
+        targetUserId,
+        messageText: messageText.trim(),
+        roomId,
+      });
     },
-    [socket, user?._id, targetUserId]
+    [socket, currentUser?._id, targetUserId]
   );
-
-  // Очистка сообщений (например, при смене собеседника)
-  const clearMessages = useCallback(() => {
-    setMessages([]);
-    setError(null);
-  }, []);
-
-  // Проверка статуса соединения
-  const isConnected = socket?.connected;
 
   return {
     messages,
     isLoading,
     error,
     sendMessage,
-    clearMessages,
-    isConnected,
+    isConnected: socket?.connected || false,
   };
 };
 

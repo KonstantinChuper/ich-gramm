@@ -19,6 +19,7 @@
     --input-bg: #FAFAFA;
     --bg-color-light: #FFFFFF;
     --bg-color: #FFFFFF;
+    --bg-color-secondary: #EFEFEF;
   }
 
   .dark {
@@ -30,6 +31,7 @@
     --input-bg: #262626;
     --bg-color-light: #262626;
     --bg-color: #121212;
+    --bg-color-secondary: #363636;
   }
 
   html, body {
