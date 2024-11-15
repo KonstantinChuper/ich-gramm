@@ -46,7 +46,7 @@ export default function Post({ post }: PostProps) {
       <div onClick={handleUserClick} className="flex gap-3 items-center cursor-pointer">
         <ProfileBadge
           src={postAuthor?.profile_image || "/default-profile-image.svg"}
-          maxWidth={26}
+          maxWidth={36}
           has_stories={postAuthor?.has_stories}
         />
         <div className="flex gap-1 text-xs">

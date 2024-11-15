@@ -26,11 +26,8 @@ interface PostAuthor {
 
 export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   const [postAuthor, setPostAuthor] = useState<PostAuthor | null>(null);
-  const { isCurrentUser } = useUser();
   const { request } = useAxios();
   const router = useRouter();
-
-  console.log(isCurrentUser);
 
   useEffect(() => {
     const fetchPostAuthor = async () => {
@@ -48,11 +45,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
 
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isCurrentUser) {
-      router.push("/profile/edit");
-    } else {
       router.push(`/profile/${post.user_id}`);
-    }
   };
 
   if (!isOpen) return null;
@@ -110,7 +103,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           )}
 
           <div className="px-5 pb-5 pt-2 border-borderColor flex-1 overflow-y-auto">
-            <CommentList postId={post._id} />
+            <CommentList postId={post._id} onClose={onClose} />
           </div>
 
           <div className="ml-[14px] pb-3">

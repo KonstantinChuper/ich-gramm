@@ -41,8 +41,23 @@ export default function ProfileHeader({ userId }: ProfileHeaderProps) {
   };
 
   const handleMessage = () => {
-    // Логика отправки сообщения
-    console.log("Message clicked");
+    if (user) {
+      const chatUser = {
+        _id: user._id,
+        username: user.username,
+        profile_image: user.profile_image,
+      };
+
+      const existingChats = JSON.parse(localStorage.getItem("recentChats") || "[]");
+      const isExisting = existingChats.some((chat: any) => chat._id === user._id);
+
+      if (!isExisting) {
+        existingChats.unshift(chatUser);
+        localStorage.setItem("recentChats", JSON.stringify(existingChats.slice(0, 20)));
+      }
+    }
+
+    router.push("/messages");
   };
 
   useEffect(() => {

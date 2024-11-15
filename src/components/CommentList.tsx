@@ -5,13 +5,16 @@ import { getTimeAgo } from "@/utils/helpers";
 import useComments from "@/hooks/useComments";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import useUser from "@/hooks/useUser";
 
 interface CommentListProps {
   postId: string;
+  onClose: () => void;
 }
 
-export default function CommentList({ postId }: CommentListProps) {
+export default function CommentList({ postId, onClose }: CommentListProps) {
   const { comments, error, fetchComments } = useComments({ postId });
+  const { user: currentUser } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +32,13 @@ export default function CommentList({ postId }: CommentListProps) {
   }, [postId, fetchComments]);
 
   const handleUserClick = (userId: string) => {
-    router.push(`/profile/${userId}`);
+    const isCommentAuthor = currentUser?._id === userId;
+    if (isCommentAuthor) {
+      onClose();
+      router.push("/profile");
+    } else {
+      router.push(`/profile/${userId}`);
+    }
   };
 
   if (error)
