@@ -62,9 +62,9 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
       <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
 
       {/* Modal window */}
-      <div className="bg-white rounded-md w-full relative max-h-[650px] max-w-[1000px] z-50 mx-4 flex">
+      <div className="bg-secondary rounded-md w-full relative max-h-[650px] max-w-[1000px] z-50 mx-4 flex">
         {/* Left side - image */}
-        <div className="flex-1 relative min-h-[650px] max-h-[650px] max-w-[577px]">
+        <div className="flex-1 relative min-h-[650px] max-h-[650px] max-w-[577px] bg-secondary rounded-md">
           <Image
             src={post.image_url}
             alt={post.caption || "Post image"}
@@ -74,9 +74,12 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
         </div>
 
         {/* Right side - post information */}
-        <div className="flex flex-col border-l border-borderColor max-w-[433px] flex-1">
-          <div className="p-4 border-b border-borderColor flex justify-between">
-            <div onClick={handleUserClick} className="flex items-center gap-3 cursor-pointer">
+        <div className="flex flex-col border-l border-borderColor max-w-[433px] flex-1 bg-secondary rounded-md">
+          <div className="bg-secondary p-4 border-b border-borderColor flex justify-between rounded-md">
+            <div
+              onClick={handleUserClick}
+              className="bg-secondary flex items-center gap-3 cursor-pointer"
+            >
               <ProfileBadge
                 src={postAuthor?.profile_image || "/default-profile-image.svg"}
                 maxWidth={32}
@@ -89,8 +92,8 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
           </div>
 
           {post.caption && (
-            <div className="p-5">
-              <div className="flex gap-3">
+            <div className="bg-secondary p-5">
+              <div className="bg-secondary flex gap-3">
                 <ProfileBadge
                   src={postAuthor?.profile_image || "/default-profile-image.svg"}
                   maxWidth={32}

@@ -101,7 +101,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
     <div className="fixed inset-0 z-20 ml-[245px] flex items-center justify-center">
       <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
 
-      <div className="bg-white rounded-xl w-full max-w-[913px] max-h-[913px] relative z-50 mx-5">
+      <div className="bg-secondary rounded-xl w-full max-w-[913px] max-h-[913px] relative z-50 mx-5">
         <div className="border-b border-borderColor p-3 text-center relative">
           <h2 className="font-semibold">Create new post</h2>
           <button
@@ -179,7 +179,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                 onChange={handleTextChange}
                 placeholder="Write a caption..."
                 maxLength={maxWords}
-                className="mt-[7px] p-3 pb-6 border border-borderColor w-full h-full rounded-xl focus:outline-none focus:bg-bgColorLight !ring-textGrayColor focus:!ring-textGrayColor focus:!border-textGrayColor resize-none flex-1"
+                className="mt-[7px] p-3 pb-6 border border-borderColor w-full h-full rounded-xl focus:outline-none focus:bg-bgColorLight !ring-textGrayColor focus:!ring-textGrayColor focus:!border-textGrayColor resize-none flex-1 bg-inputColor"
               />
               <EmojiPicker onEmojiSelect={handleEmojiSelect} />
               <WordCounter

@@ -152,7 +152,10 @@ export default function EditProfile() {
             name="username"
             value={formData.username}
             onChange={handleTextChange}
-            className="mt-[7px] p-3 border border-borderColor w-full rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-500"
+            className="mt-[7px] p-3 w-full rounded-xl bg-inputColor
+            !border !border-borderColor
+            !ring-0 !outline-none
+            focus:!outline-none focus:!ring-2 focus:!ring-zinc-500"
           />
         </div>
         <div className="pt-8">
@@ -162,7 +165,10 @@ export default function EditProfile() {
             name="full_name"
             value={formData.full_name}
             onChange={handleTextChange}
-            className="mt-[7px] p-3 border border-borderColor w-full rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-500"
+            className="mt-[7px] p-3 w-full rounded-xl bg-inputColor
+            !border !border-borderColor
+            !ring-0 !outline-none
+            focus:!outline-none focus:!ring-2 focus:!ring-zinc-500"
           />
         </div>
         <div className="pt-8 relative">
@@ -171,7 +177,10 @@ export default function EditProfile() {
             name="bio"
             value={formData.bio}
             onChange={handleTextChange}
-            className="mt-[7px] p-3 border border-borderColor w-full rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-500 resize-none"
+            className="mt-[7px] p-3 w-full rounded-xl bg-inputColor
+            !border !border-borderColor
+            !ring-0 !outline-none
+            focus:!outline-none focus:!ring-2 focus:!ring-zinc-500 resize-none"
           />
           <WordCounter currentLength={formData.bio.length} maxLength={maxWords} />
         </div>

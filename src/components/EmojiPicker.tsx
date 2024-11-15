@@ -27,14 +27,20 @@ export default function EmojiPicker({ onEmojiSelect }: EmojiPickerProps) {
     <div className="relative" ref={pickerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 hover:bg-gray-100 rounded-full"
+        className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors"
         type="button"
       >
-        <Image src="/icons/emoji.svg" alt="emoji" width={20} height={20} className="min-w-[20px] min-h-[20px]" />
+        <Image
+          src="/icons/emoji.svg"
+          alt="emoji"
+          width={20}
+          height={20}
+          className="min-w-[20px] min-h-[20px]"
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute bottom-full left-0 min-w-[270px] w-full mb-2 bg-white border rounded-lg shadow-lg p-2 z-10">
+        <div className="absolute bottom-full left-0 min-w-[270px] w-full mb-2 bg-primary border rounded-lg shadow-lg p-2 z-10">
           <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
             {emojis.map((emoji, index) => (
               <button

@@ -69,7 +69,6 @@ const config: Config = {
               ring: "var(--text-gray-color)",
               border: "var(--text-gray-color)",
             },
-            // Добавляем цвета для темной темы
             dark: {
               primary: "var(--dark-primary)",
               secondary: "var(--dark-secondary)",

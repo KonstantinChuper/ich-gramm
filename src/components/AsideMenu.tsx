@@ -65,7 +65,7 @@ export default function AsideMenu() {
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <aside
         onClick={handleAsideClick}
-        className="fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor border-b-0 overflow-auto z-50 bg-primary"
+        className="fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor border-b-0 overflow-auto z-50 bg-secondary"
       >
         <nav className="space-y-7 fixed">
           <Link href={"/"} className="max-w-[94px] max-h-[50px]">
