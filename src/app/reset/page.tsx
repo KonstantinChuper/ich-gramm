@@ -21,7 +21,7 @@ export default function page() {
               account.
             </p>
             <div className="pt-4">
-              <Input placeholder="Email or Username" />
+              <Input placeholder="Username" name="username" />
               <button className="btn btn-primary w-full mt-[16px]">Reset your password</button>
             </div>
             <Divider>or</Divider>
@@ -31,7 +31,7 @@ export default function page() {
           </Form>
           <Link
             href="/login"
-            className="w-[350px] h-[44px] font-semibold bg-[#FAFAFA] border-[1px] border-t-0 border-borderColor flex justify-center items-center"
+            className="w-[350px] h-[44px] font-semibold border-[1px] border-t-0 border-borderColor flex justify-center items-center hover:text-primaryColor"
           >
             Back to login
           </Link>

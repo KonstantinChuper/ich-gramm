@@ -131,7 +131,9 @@ export default function AsideMenu() {
         </nav>
       </aside>
       <SideBar toggleSidebar={isSidebarOpen}>
-        {activeSidebarContent === "/search" && <SearchSideBar />}
+        {activeSidebarContent === "/search" && (
+          <SearchSideBar onClose={() => setIsSidebarOpen(false)} />
+        )}
         {activeSidebarContent === "/notifications" && <Notifications />}
       </SideBar>
     </div>
