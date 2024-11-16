@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "dev2": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
