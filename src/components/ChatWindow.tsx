@@ -6,6 +6,7 @@ import useUser from "@/hooks/useUser";
 import ProfileBadge from "@/components/ProfileBadge";
 import { useAxios } from "@/hooks/useAxios";
 import Spiner from "./Spiner";
+import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 
 interface ChatWindowProps {
   targetUserId: string;
@@ -24,6 +25,11 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
   const { user: currentUser } = useUser();
   const { request } = useAxios();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { clearUnreadMessages } = useUnreadMessages();
+
+  useEffect(() => {
+    clearUnreadMessages(targetUserId);
+  }, [targetUserId]);
 
   useEffect(() => {
     const fetchTargetUser = async () => {

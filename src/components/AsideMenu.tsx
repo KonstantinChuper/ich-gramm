@@ -12,6 +12,7 @@ import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
 import useUser from "@/hooks/useUser";
 import CreatePostModal from "./ModalCreatePost";
+import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -20,6 +21,7 @@ export default function AsideMenu() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
   const { fetchUser, user } = useUser();
+  const { unreadCount } = useUnreadMessages();
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
@@ -81,16 +83,23 @@ export default function AsideMenu() {
                   }`}
                   onClick={() => handleItemClick(item)}
                 >
-                  <Image
-                    src={
-                      pathname === item.href && !isSidebarOpen
-                        ? item.icon.filled
-                        : item.icon.default
-                    }
-                    alt={`${item.label} Icon`}
-                    width={22}
-                    height={22}
-                  />
+                  <div className="relative">
+                    <Image
+                      src={
+                        pathname === item.href && !isSidebarOpen
+                          ? item.icon.filled
+                          : item.icon.default
+                      }
+                      alt={`${item.label} Icon`}
+                      width={22}
+                      height={22}
+                    />
+                    {item.label === "Messages" && unreadCount > 0 && (
+                      <span className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
                   {item.label}
                 </Link>
               ) : (

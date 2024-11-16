@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import useUser from "./useUser";
+import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 
 interface Message {
   _id: string;
@@ -16,8 +17,8 @@ export const useMessage = (targetUserId?: string) => {
   const [error, setError] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user: currentUser } = useUser();
+  const { addUnreadMessage } = useUnreadMessages();
 
-  // Инициализация сокета
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token || !targetUserId) return;
@@ -51,10 +52,8 @@ export const useMessage = (targetUserId?: string) => {
 
     setIsLoading(true);
 
-    // Загрузка истории сообщений
     socket.emit("loadMessages", { targetUserId });
 
-    // Обработчики событий
     socket.on("loadMessages", (loadedMessages: Message[]) => {
       setMessages(loadedMessages);
       setIsLoading(false);
@@ -62,6 +61,13 @@ export const useMessage = (targetUserId?: string) => {
 
     socket.on("receiveMessage", (newMessage: Message) => {
       setMessages((prev) => [...prev, newMessage]);
+
+      // Если сообщение от другого пользователя и не открыт его чат
+      if (newMessage.sender_id !== currentUser?._id) {
+        if (!targetUserId || newMessage.sender_id !== targetUserId) {
+          addUnreadMessage(newMessage.sender_id);
+        }
+      }
     });
 
     socket.on("error", (err) => {
@@ -74,7 +80,24 @@ export const useMessage = (targetUserId?: string) => {
       socket.off("receiveMessage");
       socket.off("error");
     };
-  }, [socket, targetUserId]);
+  }, [socket, targetUserId, currentUser?._id, addUnreadMessage]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("receiveMessage", (newMessage: Message) => {
+      setMessages((prev) => [...prev, newMessage]);
+
+      // Если сообщение от другого пользователя и не открыт его чат
+      if (newMessage.sender_id !== currentUser?._id && newMessage.sender_id !== targetUserId) {
+        addUnreadMessage(newMessage.sender_id);
+      }
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+    };
+  }, [socket, currentUser, targetUserId]);
 
   // Отправка сообщения
   const sendMessage = useCallback(

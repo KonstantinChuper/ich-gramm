@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
 import ProfileBadge from "@/components/ProfileBadge";
 import { User } from "@/types/User";
+import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 
 interface UserListProps {
   onSelectUser: (userId: string) => void;
@@ -14,6 +15,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
   const [recentUsers, setRecentUsers] = useState<User[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const { request } = useAxios();
+  const { unreadByUser } = useUnreadMessages();
 
   useEffect(() => {
     const recentChats = JSON.parse(localStorage.getItem("recentChats") || "[]");
@@ -40,26 +42,27 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
   return (
     <div className="bg-primary">
       {/* Недавние чаты */}
-      {recentUsers.length > 0 && (
-        <>
-          <div className="px-4 py-2 text-sm text-textGrayColor">Recent chats</div>
-          {recentUsers.map((user) => (
-            <div
-              key={user._id}
-              onClick={() => onSelectUser(user._id)}
-              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
-                ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
-            >
-              <ProfileBadge src={user.profile_image} maxWidth={40} />
-              <div>
-                <p className="font-semibold">{user.username}</p>
-                <p className="text-sm text-textGrayColor">Recent chat</p>
-              </div>
-            </div>
-          ))}
-          <div className="my-2" />
-        </>
-      )}
+      {recentUsers.map((user) => (
+        <div
+          key={user._id}
+          onClick={() => onSelectUser(user._id)}
+          className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
+            ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
+        >
+          <div className="relative">
+            <ProfileBadge src={user.profile_image} maxWidth={40} />
+            {unreadByUser[user._id] > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {unreadByUser[user._id]}
+              </span>
+            )}
+          </div>
+          <div>
+            <p className="font-semibold">{user.username}</p>
+            <p className="text-sm text-textGrayColor">Recent chat</p>
+          </div>
+        </div>
+      ))}
 
       {/* Все пользователи */}
       <div className="px-4 py-2 text-sm text-textGrayColor">All users</div>
