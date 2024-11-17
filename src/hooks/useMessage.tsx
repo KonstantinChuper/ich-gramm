@@ -17,6 +17,7 @@ export const useMessage = (targetUserId?: string) => {
   const { user: currentUser } = useUser();
   const socket = useRef(socketManager.getSocket());
   const isInitialLoad = useRef(true);
+  const lastSentMessage = useRef<{ text: string; timestamp: number } | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,9 +36,21 @@ export const useMessage = (targetUserId?: string) => {
     };
 
     const handleReceiveMessage = (newMessage: Message) => {
+      // Проверяем, не является ли это сообщение дубликатом последнего отправленного
+      if (
+        lastSentMessage.current &&
+        newMessage.message_text === lastSentMessage.current.text &&
+        newMessage.sender_id === currentUser._id &&
+        Date.now() - lastSentMessage.current.timestamp < 1000 // проверяем временной интервал
+      ) {
+        return;
+      }
+
       if (newMessage.sender_id === targetUserId || newMessage.receiver_id === targetUserId) {
         setMessages((prev) => [...prev, newMessage]);
-      } else if (newMessage.sender_id !== currentUser._id) {
+        return;
+      }
+      if (newMessage.sender_id !== currentUser._id) {
         socketManager.addUnreadMessage(newMessage.sender_id);
       }
     };
@@ -61,6 +74,7 @@ export const useMessage = (targetUserId?: string) => {
         socket.current.off("error", handleError);
       }
       isInitialLoad.current = true;
+      lastSentMessage.current = null;
     };
   }, [targetUserId, currentUser?._id]);
 
@@ -70,19 +84,28 @@ export const useMessage = (targetUserId?: string) => {
         return;
       }
 
+      const trimmedMessage = messageText.trim();
+
+      // Сохраняем информацию о последнем отправленном сообщении
+      lastSentMessage.current = {
+        text: trimmedMessage,
+        timestamp: Date.now(),
+      };
+
       const newMessage = {
+        _id: Date.now().toString(),
         sender_id: currentUser._id,
         receiver_id: targetUserId,
-        message_text: messageText.trim(),
+        message_text: trimmedMessage,
         created_at: new Date(),
       };
 
       // Оптимистичное обновление UI
-      setMessages((prev) => [...prev, { ...newMessage, _id: Date.now().toString() }]);
+      setMessages((prev) => [...prev, newMessage]);
 
       socket.current.emit("sendMessage", {
         targetUserId,
-        messageText: messageText.trim(),
+        messageText: trimmedMessage,
       });
     },
     [currentUser?._id, targetUserId]
