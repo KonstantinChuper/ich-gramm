@@ -1,7 +1,6 @@
-import { useState, useCallback, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
+import { useState, useCallback, useEffect, useRef } from "react";
 import useUser from "./useUser";
-import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
+import socketManager from "@/services/socketManager";
 
 interface Message {
   _id: string;
@@ -15,106 +14,78 @@ export const useMessage = (targetUserId?: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
   const { user: currentUser } = useUser();
-  const { addUnreadMessage } = useUnreadMessages();
+  const socket = useRef(socketManager.getSocket());
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token || !targetUserId) return;
+    if (!token || !targetUserId || !currentUser?._id) return;
 
-    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000", {
-      auth: { token },
-    });
+    if (isInitialLoad.current) {
+      setIsLoading(true);
+      isInitialLoad.current = false;
+    }
 
-    newSocket.on("connect", () => {
-      console.log("Socket connected");
-      // Присоединяемся к комнате при подключении
-      const roomId = [currentUser?._id, targetUserId].sort().join("_");
-      newSocket.emit("joinRoom", { targetUserId });
-    });
+    socket.current = socketManager.connect(token);
 
-    newSocket.on("connect_error", (err) => {
-      console.error("Socket connection error:", err);
-      setError("Connection error");
-    });
+    const handleLoadMessages = (loadedMessages: Message[]) => {
+      setMessages(loadedMessages);
+      setIsLoading(false);
+    };
 
-    setSocket(newSocket);
+    const handleReceiveMessage = (newMessage: Message) => {
+      if (newMessage.sender_id === targetUserId || newMessage.receiver_id === targetUserId) {
+        setMessages((prev) => [...prev, newMessage]);
+      } else if (newMessage.sender_id !== currentUser._id) {
+        socketManager.addUnreadMessage(newMessage.sender_id);
+      }
+    };
+
+    const handleError = (error: any) => {
+      setError(error.message);
+      setIsLoading(false);
+    };
+
+    socketManager.joinRoom(targetUserId);
+    socket.current?.emit("loadMessages", { targetUserId });
+
+    socket.current?.on("loadMessages", handleLoadMessages);
+    socket.current?.on("receiveMessage", handleReceiveMessage);
+    socket.current?.on("error", handleError);
 
     return () => {
-      newSocket.disconnect();
+      if (socket.current) {
+        socket.current.off("loadMessages", handleLoadMessages);
+        socket.current.off("receiveMessage", handleReceiveMessage);
+        socket.current.off("error", handleError);
+      }
+      isInitialLoad.current = true;
     };
   }, [targetUserId, currentUser?._id]);
 
-  // Загрузка сообщений и обработка новых
-  useEffect(() => {
-    if (!socket) return;
-
-    setIsLoading(true);
-
-    socket.emit("loadMessages", { targetUserId });
-
-    socket.on("loadMessages", (loadedMessages: Message[]) => {
-      setMessages(loadedMessages);
-      setIsLoading(false);
-    });
-
-    socket.on("receiveMessage", (newMessage: Message) => {
-      setMessages((prev) => [...prev, newMessage]);
-
-      // Если сообщение от другого пользователя и не открыт его чат
-      if (newMessage.sender_id !== currentUser?._id) {
-        if (!targetUserId || newMessage.sender_id !== targetUserId) {
-          addUnreadMessage(newMessage.sender_id);
-        }
-      }
-    });
-
-    socket.on("error", (err) => {
-      setError(err.message);
-      setIsLoading(false);
-    });
-
-    return () => {
-      socket.off("loadMessages");
-      socket.off("receiveMessage");
-      socket.off("error");
-    };
-  }, [socket, targetUserId, currentUser?._id, addUnreadMessage]);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("receiveMessage", (newMessage: Message) => {
-      setMessages((prev) => [...prev, newMessage]);
-
-      // Если сообщение от другого пользователя и не открыт его чат
-      if (newMessage.sender_id !== currentUser?._id && newMessage.sender_id !== targetUserId) {
-        addUnreadMessage(newMessage.sender_id);
-      }
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, [socket, currentUser, targetUserId]);
-
-  // Отправка сообщения
   const sendMessage = useCallback(
     (messageText: string) => {
-      if (!socket || !currentUser?._id || !targetUserId || !messageText.trim()) {
+      if (!socket.current || !currentUser?._id || !targetUserId || !messageText.trim()) {
         return;
       }
 
-      const roomId = [currentUser._id, targetUserId].sort().join("_");
+      const newMessage = {
+        sender_id: currentUser._id,
+        receiver_id: targetUserId,
+        message_text: messageText.trim(),
+        created_at: new Date(),
+      };
 
-      socket.emit("sendMessage", {
+      // Оптимистичное обновление UI
+      setMessages((prev) => [...prev, { ...newMessage, _id: Date.now().toString() }]);
+
+      socket.current.emit("sendMessage", {
         targetUserId,
         messageText: messageText.trim(),
-        roomId,
       });
     },
-    [socket, currentUser?._id, targetUserId]
+    [currentUser?._id, targetUserId]
   );
 
   return {
@@ -122,7 +93,7 @@ export const useMessage = (targetUserId?: string) => {
     isLoading,
     error,
     sendMessage,
-    isConnected: socket?.connected || false,
+    isConnected: socket.current?.connected || false,
   };
 };
 

@@ -6,7 +6,7 @@ import useUser from "@/hooks/useUser";
 import ProfileBadge from "@/components/ProfileBadge";
 import { useAxios } from "@/hooks/useAxios";
 import Spiner from "./Spiner";
-import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
+import socketManager from "@/services/socketManager";
 
 interface ChatWindowProps {
   targetUserId: string;
@@ -21,14 +21,13 @@ interface TargetUser {
 export default function ChatWindow({ targetUserId }: ChatWindowProps) {
   const [newMessage, setNewMessage] = useState("");
   const [targetUser, setTargetUser] = useState<TargetUser | null>(null);
-  const { messages, sendMessage, isLoading, error } = useMessage(targetUserId);
+  const { messages, sendMessage, isLoading, error, isConnected } = useMessage(targetUserId);
   const { user: currentUser } = useUser();
   const { request } = useAxios();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { clearUnreadMessages } = useUnreadMessages();
 
   useEffect(() => {
-    clearUnreadMessages(targetUserId);
+    socketManager.clearUnreadMessages(targetUserId);
   }, [targetUserId]);
 
   useEffect(() => {
@@ -64,15 +63,17 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
     return <div className="text-red-500 text-center p-4">{error}</div>;
   }
 
+  if (!isConnected) {
+    return <div className="text-yellow-500 text-center p-4">Переподключение...</div>;
+  }
+
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
       <div className="p-4 border-b border-borderColor flex items-center gap-3">
         <ProfileBadge src={targetUser?.profile_image} maxWidth={40} />
         <span className="font-semibold">{targetUser?.username}</span>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => {
           const isCurrentUser = message.sender_id === currentUser?._id;
@@ -96,7 +97,6 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
       <div className="p-4 border-t border-borderColor">
         <div className="flex gap-2">
           <input
