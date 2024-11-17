@@ -27,11 +27,13 @@ export default function MessagesPage() {
   return (
     <div className="ml-[245px] flex h-full bg-primary">
       <div className="max-w-[350px] border-r border-borderColor bg-primary flex-1">
-        <div className="flex items-center gap-4 p-6">
-          <ProfileBadge src={user?.profile_image} maxWidth={50} />
-          <p className="font-semibold">{user?.username}</p>
+        <div className="sticky top-0">
+          <div className="flex items-center gap-4 p-6">
+            <ProfileBadge src={user?.profile_image} maxWidth={50} />
+            <p className="font-semibold">{user?.username}</p>
+          </div>
+          <ChatUserList onSelectUser={setSelectedUserId} selectedUserId={selectedUserId} />
         </div>
-        <ChatUserList onSelectUser={setSelectedUserId} selectedUserId={selectedUserId} />
       </div>
 
       <div className="flex-1 bg-primary">
