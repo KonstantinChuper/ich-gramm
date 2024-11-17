@@ -15,7 +15,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
   const [recentUsers, setRecentUsers] = useState<User[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const { request } = useAxios();
-  const { unreadByUser } = useUnreadMessages();
+  const { unreadByUser, clearUnreadMessages } = useUnreadMessages();
 
   useEffect(() => {
     const recentChats = JSON.parse(localStorage.getItem("recentChats") || "[]");
@@ -39,13 +39,18 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
     fetchUsers();
   }, [recentUsers]);
 
+  const handleUserSelect = (userId: string) => {
+    onSelectUser(userId);
+    clearUnreadMessages(userId);
+  };
+
   return (
     <div className="bg-primary">
       {/* Недавние чаты */}
       {recentUsers.map((user) => (
         <div
           key={user._id}
-          onClick={() => onSelectUser(user._id)}
+          onClick={() => handleUserSelect(user._id)}
           className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
             ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
         >

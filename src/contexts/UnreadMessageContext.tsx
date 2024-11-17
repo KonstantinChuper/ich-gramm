@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import useUser from "@/hooks/useUser";
+import socketManager from "@/services/socketManager";
 
 interface UnreadMessagesContextType {
   unreadCount: number;
@@ -63,6 +64,7 @@ export function UnreadMessagesProvider({ children }: { children: React.ReactNode
       ...prev,
       [userId]: 0,
     }));
+    socketManager.clearUnreadMessages(userId);
   };
 
   const unreadCount = Object.values(unreadByUser).reduce((a, b) => a + b, 0);
