@@ -154,7 +154,7 @@ export default function usePost() {
 
   // Удаление поста
   const deletePost = useCallback(
-    async (postId: string) => {
+    async (postId: string, payload: { postId: string }) => {
       const token = checkToken();
       if (!token) return false;
 
@@ -162,6 +162,7 @@ export default function usePost() {
         const { error } = await request({
           endpoint: `/api/post/${postId}`,
           method: "DELETE",
+          data: payload,
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -173,16 +174,13 @@ export default function usePost() {
         }
 
         setPosts((prev) => prev.filter((post) => post._id !== postId));
-        if (currentPost?._id === postId) {
-          setCurrentPost(null);
-        }
         return true;
       } catch (error) {
         console.error("Delete post error:", error);
         return false;
       }
     },
-    [request, currentPost]
+    [request]
   );
 
   // Получение ленты постов

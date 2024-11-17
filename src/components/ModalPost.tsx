@@ -12,6 +12,7 @@ import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
 import LikeCounter from "./LikeCounter";
 import useUser from "@/hooks/useUser";
+import usePost from "@/hooks/usePost";
 
 interface ModalPostProps {
   post: Post;
@@ -26,6 +27,9 @@ interface PostAuthor {
 
 export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   const [postAuthor, setPostAuthor] = useState<PostAuthor | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const { user: currentUser } = useUser();
+  const { deletePost } = usePost();
   const { request } = useAxios();
   const router = useRouter();
 
@@ -45,7 +49,40 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
 
   const handleUserClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-      router.push(`/profile/${post.user_id}`);
+    router.push(`/profile/${post.user_id}`);
+  };
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowMenu(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const payload = { postId: post._id };
+      const success = await deletePost(post._id, payload);
+      if (success) {
+        window.location.reload();
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+    setShowMenu(false);
+  };
+
+  const handleEdit = () => {
+    setShowMenu(false);
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/post/${post._id}`);
+    setShowMenu(false);
+  };
+
+  const handleGoToPost = () => {
+    router.push(`/post/${post._id}`);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -79,9 +116,62 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
               />
               <span className="font-semibold">{postAuthor?.username}</span>
             </div>
-            <button>
-              <Image src={menuBtn} alt="menu" width={24} height={24} />
-            </button>
+            <div className="relative">
+              <button
+                onClick={handleMenuClick}
+                className="rounded-full hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors p-1"
+              >
+                <Image src={menuBtn} alt="menu" width={24} height={24} className="rounded-full" />
+              </button>
+
+              {showMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 bg-black/70 z-[100] w-full h-full"
+                    onClick={() => setShowMenu(false)}
+                  />
+                  <div
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg shadow-lg border border-borderColor z-[110] w-[400px] md:ml-[145px]"
+                    style={{ position: "fixed" }}
+                  >
+                    {currentUser?._id === post.user_id ? (
+                      <>
+                        <button
+                          onClick={handleDelete}
+                          className="w-full p-3 text-red-500 font-semibold border-b border-borderColor hover:bg-gray-50 dark:hover:bg-zinc-700"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={handleEdit}
+                          className="w-full p-3 border-b border-borderColor hover:bg-gray-50 dark:hover:bg-zinc-700"
+                        >
+                          Edit
+                        </button>
+                      </>
+                    ) : null}
+                    <button
+                      onClick={handleGoToPost}
+                      className="w-full p-3 border-b border-borderColor hover:bg-gray-50 dark:hover:bg-zinc-700"
+                    >
+                      Go to post
+                    </button>
+                    <button
+                      onClick={handleCopyLink}
+                      className="w-full p-3 border-b border-borderColor hover:bg-gray-50 dark:hover:bg-zinc-700"
+                    >
+                      Copy link
+                    </button>
+                    <button
+                      onClick={() => setShowMenu(false)}
+                      className="w-full p-3 hover:bg-gray-50 dark:hover:bg-zinc-700"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           {post.caption && (

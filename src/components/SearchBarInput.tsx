@@ -118,6 +118,7 @@ export default function SearchBarInput({ mt, onClose }: SearchBarInputProps) {
               />
               <div>
                 <p className="font-semibold">{user.username}</p>
+                <p className="text-sm text-textGrayColor">{user.full_name}</p>
               </div>
             </Link>
           ))}
@@ -149,6 +150,7 @@ export default function SearchBarInput({ mt, onClose }: SearchBarInputProps) {
                     maxWidth={44}
                   />
                   <p className="font-semibold">{user.username}</p>
+                  <p className="text-sm text-textGrayColor">{user.full_name}</p>
                 </Link>
                 <button
                   onClick={() => removeFromRecentSearches(user._id)}
