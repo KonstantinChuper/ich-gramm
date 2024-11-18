@@ -35,15 +35,17 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const { socket } = useSocket();
 
   useEffect(() => {
-    if (!currentUser?._id || !socket) return;
+    const count = notifications.filter((n) => !n.is_read).length;
+    setUnreadCount(count);
+  }, [notifications]);
 
+  useEffect(() => {
+    if (!currentUser?._id || !socket) return;
     // Подписываемся на уведомления
     socket.emit("joinNotifications", currentUser._id);
-
     // Слушаем новые уведомления
     socket.on("newNotification", (notification: Notification) => {
       setNotifications((prev) => [notification, ...prev]);
-      setUnreadCount((prev) => prev + 1);
     });
 
     return () => {
@@ -75,12 +77,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const createNotification = useCallback(
     async (user_id: string, type: string, content: string) => {
       if (user_id === currentUser?._id) {
-        console.log("Skipping self-notification");
         return;
       }
 
       try {
-        const { data } = await request({
+        await request({
           endpoint: `/api/notifications`,
           method: "POST",
           data: {
@@ -90,14 +91,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             content,
           },
         });
-
-        if (data) {
-          //   if (currentUser?._id === user_id) {
-          //     setNotifications((prev) => [...prev, data as Notification]);
-          //   }
-          //   fetchNotifications(user_id);
-          //
-        }
       } catch (error) {
         console.error("Error creating notification:", error);
       }
@@ -117,7 +110,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         setNotifications((prev) =>
           prev.map((notif) => (notif._id === notificationId ? { ...notif, is_read: true } : notif))
         );
-        setUnreadCount((prev) => prev - 1);
       } catch (error) {
         console.error("Error marking notification as read:", error);
       }
@@ -137,13 +129,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           },
         });
 
-        setNotifications((prev) => {
-          const notification = prev.find((n) => n._id === notificationId);
-          if (notification && !notification.is_read) {
-            setUnreadCount((count) => count - 1);
-          }
-          return prev.filter((notif) => notif._id !== notificationId);
-        });
+        setNotifications((prev) => prev.filter((notif) => notif._id !== notificationId));
       } catch (error) {
         console.error("Error deleting notification:", error);
       }
