@@ -8,6 +8,7 @@ import messageIcon from "@/assets/message.svg";
 import { useAxios } from "@/hooks/useAxios";
 import useUser from "@/hooks/useUser";
 import { usePostContext } from "@/contexts/PostContext";
+import useNotifications from "@/hooks/useNotifications";
 
 interface LikeCounterProps {
   postId: string;
@@ -16,9 +17,11 @@ interface LikeCounterProps {
 export default function LikeCounter({ postId }: LikeCounterProps) {
   const { user: currentUser } = useUser();
   const { request } = useAxios();
-  const { updatePostLike, getPostLikes, getIsPostLiked } = usePostContext();
+  const { updatePostLike, getPostLikes, getIsPostLiked, posts } = usePostContext();
+  const { createNotification } = useNotifications();
   const likesCount = getPostLikes(postId);
   const isLiked = getIsPostLiked(postId);
+  const currentPost = posts.find((post) => post._id === postId);
 
   useEffect(() => {
     const checkIfLiked = async () => {
@@ -42,7 +45,7 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
   const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (!currentUser) return;
+    if (!currentUser || !currentPost) return;
 
     try {
       if (isLiked) {
@@ -71,6 +74,14 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
           },
         });
         updatePostLike(postId, likesCount + 1, true);
+
+        if (currentPost.user_id !== currentUser._id) {
+          await createNotification(
+            currentPost.user_id,
+            "like",
+            currentUser.username || "Someone"
+          );
+        }
       }
     } catch (error) {
       console.error("Error handling like:", error);
