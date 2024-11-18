@@ -6,18 +6,20 @@ import useUser from "@/hooks/useUser";
 import { getTimeAgo } from "@/utils/helpers";
 import Image from "next/image";
 import closeIcon from "@/assets/close-icon.svg";
+import { useNotificationContext } from "@/contexts/NotificationContext";
+
 
 export default function Notifications() {
   const { user: currentUser } = useUser();
   const { notifications, isLoading, fetchNotifications, markAsRead, deleteNotification } =
-    useNotifications();
+    useNotificationContext();
 
   useEffect(() => {
     if (currentUser?._id) {
-      console.log("Fetching notifications for user:", currentUser._id); // Добавляем лог
+      console.log("Fetching notifications for user:", currentUser._id);
       fetchNotifications(currentUser._id);
     }
-  }, [currentUser?._id]); // Добавляем зависимость
+  }, [currentUser?._id]);
 
   console.log("Current notifications:", notifications);
 

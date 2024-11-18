@@ -6,6 +6,8 @@ import { Providers } from "@/theme/provider";
 import ThemeWrapper from "@/theme/theme-wraper";
 import ThemeToggle from "@/components/ThemeToggle";
 import { UnreadMessagesProvider } from "@/contexts/UnreadMessageContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import { SocketProvider } from "@/contexts/SocketContext";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700", "900"],
@@ -27,12 +29,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${roboto.variable} antialiased`} suppressHydrationWarning>
         <Providers>
-          <UnreadMessagesProvider>
-            <ThemeWrapper>
-              <ThemeToggle />
-              <ClientLayout>{children}</ClientLayout>
-            </ThemeWrapper>
-          </UnreadMessagesProvider>
+          <SocketProvider>
+            <NotificationProvider>
+              <UnreadMessagesProvider>
+                <ThemeWrapper>
+                  <ThemeToggle />
+                  <ClientLayout>{children}</ClientLayout>
+                </ThemeWrapper>
+              </UnreadMessagesProvider>
+            </NotificationProvider>
+          </SocketProvider>
         </Providers>
       </body>
     </html>

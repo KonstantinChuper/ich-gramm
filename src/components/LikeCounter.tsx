@@ -9,6 +9,8 @@ import { useAxios } from "@/hooks/useAxios";
 import useUser from "@/hooks/useUser";
 import { usePostContext } from "@/contexts/PostContext";
 import useNotifications from "@/hooks/useNotifications";
+import { useNotificationContext } from "@/contexts/NotificationContext";
+
 
 interface LikeCounterProps {
   postId: string;
@@ -18,7 +20,7 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
   const { user: currentUser } = useUser();
   const { request } = useAxios();
   const { updatePostLike, getPostLikes, getIsPostLiked, posts } = usePostContext();
-  const { createNotification } = useNotifications();
+  const { createNotification } = useNotificationContext();
   const likesCount = getPostLikes(postId);
   const isLiked = getIsPostLiked(postId);
   const currentPost = posts.find((post) => post._id === postId);

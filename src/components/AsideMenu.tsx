@@ -13,6 +13,7 @@ import Notifications from "./Notifications";
 import useUser from "@/hooks/useUser";
 import CreatePostModal from "./ModalCreatePost";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
+import { useNotificationContext } from "@/contexts/NotificationContext";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -22,6 +23,7 @@ export default function AsideMenu() {
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
   const { fetchUser, user } = useUser();
   const { unreadCount } = useUnreadMessages();
+  const { unreadCount: unreadNotifications } = useNotificationContext();
 
   const handleToggleSidebar = (contentId: string) => {
     setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
@@ -105,20 +107,27 @@ export default function AsideMenu() {
               ) : (
                 <button
                   onClick={() => handleItemClick(item)}
-                  className={`text-sm flex items-center gap-4 ${
+                  className={`text-sm flex items-center gap-4 relative ${
                     activeSidebarContent === item.href && isSidebarOpen ? "font-bold" : ""
                   }`}
                 >
-                  <Image
-                    src={
-                      activeSidebarContent === item.href && isSidebarOpen
-                        ? item.icon.filled
-                        : item.icon.default
-                    }
-                    alt={`${item.label} Icon`}
-                    width={22}
-                    height={22}
-                  />
+                  <div className="relative">
+                    <Image
+                      src={
+                        activeSidebarContent === item.href && isSidebarOpen
+                          ? item.icon.filled
+                          : item.icon.default
+                      }
+                      alt={`${item.label} Icon`}
+                      width={22}
+                      height={22}
+                    />
+                    {item.label === "Notifications" && unreadNotifications > 0 && (
+                      <span className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                        {unreadNotifications}
+                      </span>
+                    )}
+                  </div>
                   {item.label}
                 </button>
               )}

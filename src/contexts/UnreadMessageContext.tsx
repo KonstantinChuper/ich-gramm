@@ -17,7 +17,6 @@ const UnreadMessagesContext = createContext<UnreadMessagesContextType | undefine
 
 export function UnreadMessagesProvider({ children }: { children: React.ReactNode }) {
   const [unreadByUser, setUnreadByUser] = useState<Record<string, number>>(() => {
-    // Загружаем состояние из localStorage при инициализации
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("unreadMessages");
       return saved ? JSON.parse(saved) : {};

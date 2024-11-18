@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Post } from "@/types/Post";
 import usePost from "@/hooks/usePost";
 
@@ -45,7 +45,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
   const [localSelectedPost, setLocalSelectedPost] = useState<Post | null>(selectedPost);
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLocalPosts(posts);
   }, [posts]);
 
