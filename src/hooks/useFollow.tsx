@@ -4,30 +4,29 @@ import { useCallback, useEffect, useState } from "react";
 import { useAxios } from "./useAxios";
 import { useRouter } from "next/navigation";
 import useUser from "./useUser";
-
+import { useNotificationContext } from "@/contexts/NotificationContext";
 interface UseFollowProps {
   targetUserId?: string;
   onFollowChange?: () => void;
 }
 
-// Определяем тип для пользователя
 interface FollowedUser {
   _id: string;
   username: string;
   profile_image?: string;
 }
 
-// Определяем тип для подписки
 interface Follow {
   _id: string;
   follower_user_id: string;
-  followed_user_id: FollowedUser | string; // может быть объектом или строкой
+  followed_user_id: FollowedUser | string;
 }
 
 export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const { request, isLoading } = useAxios();
   const { getCurrentUser } = useUser();
+  const { createNotification } = useNotificationContext();
   const router = useRouter();
 
   useEffect(() => {
@@ -36,7 +35,6 @@ export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
     }
   }, [targetUserId]);
 
-  // Проверка статуса подписки
   const checkFollowStatus = useCallback(async () => {
     if (!targetUserId) return;
 
@@ -51,7 +49,6 @@ export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
 
       if (data && Array.isArray(data)) {
         const isUserFollowing = data.some((follow) => {
-          // Проверяем, является ли followed_user_id объектом или строкой
           const followedId =
             typeof follow.followed_user_id === "object"
               ? follow.followed_user_id._id
@@ -67,7 +64,6 @@ export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
     }
   }, [targetUserId, request, getCurrentUser]);
 
-  // Подписка/отписка на пользователя
   const handleFollow = useCallback(async () => {
     if (!targetUserId) {
       router.push("/login");
@@ -96,6 +92,14 @@ export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
         setIsFollowing(!isFollowing);
         await checkFollowStatus();
         onFollowChange?.();
+
+        if (!isFollowing) {
+          await createNotification(
+            targetUserId,
+            "follow",
+            `${currentUser.username} started following you`
+          );
+        }
       }
     } catch (error) {
       console.error("Error handling follow:", error);

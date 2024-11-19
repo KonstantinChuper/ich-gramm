@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import useNotifications from "@/hooks/useNotifications";
 import useUser from "@/hooks/useUser";
 import { getTimeAgo } from "@/utils/helpers";
 import Image from "next/image";

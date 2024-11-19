@@ -8,9 +8,8 @@ import messageIcon from "@/assets/message.svg";
 import { useAxios } from "@/hooks/useAxios";
 import useUser from "@/hooks/useUser";
 import { usePostContext } from "@/contexts/PostContext";
-import useNotifications from "@/hooks/useNotifications";
 import { useNotificationContext } from "@/contexts/NotificationContext";
-
+import usePost from "@/hooks/usePost";
 
 interface LikeCounterProps {
   postId: string;
@@ -19,11 +18,11 @@ interface LikeCounterProps {
 export default function LikeCounter({ postId }: LikeCounterProps) {
   const { user: currentUser } = useUser();
   const { request } = useAxios();
-  const { updatePostLike, getPostLikes, getIsPostLiked, posts } = usePostContext();
+  const { updatePostLike, getPostLikes, getIsPostLiked } = usePostContext();
+  const { fetchPostById } = usePost();
   const { createNotification } = useNotificationContext();
   const likesCount = getPostLikes(postId);
   const isLiked = getIsPostLiked(postId);
-  const currentPost = posts.find((post) => post._id === postId);
 
   useEffect(() => {
     const checkIfLiked = async () => {
@@ -47,7 +46,7 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
   const handleLikeClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (!currentUser || !currentPost) return;
+    if (!currentUser) return;
 
     try {
       if (isLiked) {
@@ -77,11 +76,13 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
         });
         updatePostLike(postId, likesCount + 1, true);
 
-        if (currentPost.user_id !== currentUser._id) {
+        const currentPost = await fetchPostById(postId);
+
+        if (currentPost && currentPost.user_id._id !== currentUser._id) {
           await createNotification(
-            currentPost.user_id,
+            currentPost.user_id._id,
             "like",
-            currentUser.username || "Someone"
+            `${currentUser.username} liked your post`
           );
         }
       }

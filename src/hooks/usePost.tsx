@@ -13,6 +13,10 @@ interface PostsResponse {
   posts: Post[];
 }
 
+interface SinglePostResponse {
+  post: Post;
+}
+
 export default function usePost() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
@@ -59,7 +63,7 @@ export default function usePost() {
       if (!token) return;
 
       try {
-        const { data, error } = await request<{ data: Post[] }>({
+        const { data, error } = await request<Post>({
           endpoint: `/api/post/user/${userId}`,
           method: "GET",
           headers: {
@@ -67,14 +71,9 @@ export default function usePost() {
           },
         });
 
-        console.log("Response data:", data);
-
-        if (error) throw new Error(error);
-
-        if (data && "data" in data) {
-          setPosts(data.data);
-        } else if (Array.isArray(data)) {
-          setPosts(data);
+        if (data) {
+          setCurrentPost(data);
+          return data;
         }
       } catch (error) {
         console.error("Error fetching user posts:", error);
@@ -83,7 +82,6 @@ export default function usePost() {
     [request]
   );
 
-  // Создание нового поста
   const createPost = useCallback(
     async (formData: FormData) => {
       const token = checkToken();
@@ -117,7 +115,6 @@ export default function usePost() {
     [request]
   );
 
-  // Обновление поста
   const updatePost = useCallback(
     async (postId: string, caption: string) => {
       const token = checkToken();
@@ -152,7 +149,6 @@ export default function usePost() {
     [request]
   );
 
-  // Удаление поста
   const deletePost = useCallback(
     async (postId: string, payload: { postId: string }) => {
       const token = checkToken();
@@ -183,7 +179,6 @@ export default function usePost() {
     [request]
   );
 
-  // Получение ленты постов
   const fetchFeedPosts = useCallback(async () => {
     const token = checkToken();
     if (!token) return;
@@ -209,7 +204,6 @@ export default function usePost() {
     }
   }, [request]);
 
-  // Получение постов для explore
   const fetchExplorePosts = useCallback(async () => {
     const token = checkToken();
     if (!token) return;
@@ -235,6 +229,38 @@ export default function usePost() {
     }
   }, [request]);
 
+  const fetchPostById = useCallback(
+    async (postId: string) => {
+      const token = checkToken();
+      if (!token) return null;
+
+      try {
+        const { data, error } = await request<Post>({
+          endpoint: `/api/post/single/${postId}`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (error) {
+          console.error("Error fetching post:", error);
+          return null;
+        }
+
+        if (data) {
+          setCurrentPost(data);
+          return data;
+        }
+
+        return null;
+      } catch (error) {
+        console.error("Error fetching post by id:", error);
+      }
+    },
+    [request]
+  );
+
   return {
     posts,
     currentPost,
@@ -242,6 +268,7 @@ export default function usePost() {
     error,
     fetchUserPosts,
     fetchUserPostsById,
+    fetchPostById,
     createPost,
     updatePost,
     deletePost,

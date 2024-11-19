@@ -1,6 +1,10 @@
 interface Post {
   _id: string;
-  user_id: string;
+  user_id: {
+    _id: string;
+    username?: string;
+    avatar_url?: string;
+  };
   image_url: string;
   caption: string;
   likes_count: number;
