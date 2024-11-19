@@ -5,6 +5,8 @@ import { useAxios } from "@/hooks/useAxios";
 import ProfileBadge from "@/components/ProfileBadge";
 import { User } from "@/types/User";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
+import socketManager from "@/services/socketManager";
+import useUser from "@/hooks/useUser";
 
 interface UserListProps {
   onSelectUser: (userId: string) => void;
@@ -12,32 +14,72 @@ interface UserListProps {
 }
 
 export default function UserList({ onSelectUser, selectedUserId }: UserListProps) {
-  const [recentUsers, setRecentUsers] = useState<User[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [chatUsers, setChatUsers] = useState<User[]>([]);
   const { request } = useAxios();
   const { unreadByUser, clearUnreadMessages } = useUnreadMessages();
+  const { user: currentUser } = useUser();
 
   useEffect(() => {
-    const recentChats = JSON.parse(localStorage.getItem("recentChats") || "[]");
-    setRecentUsers(recentChats);
-  }, []);
+    const savedUsers = JSON.parse(localStorage.getItem("recentChats") || "[]");
+    const filteredUsers = savedUsers.filter((user: User) => user._id !== currentUser?._id);
+    setChatUsers(filteredUsers);
+  }, [currentUser]);
+
+  // Обработка новых сообщений
+  // useEffect(() => {
+  //   const socket = socketManager.getSocket();
+
+  //   const handleNewMessage = async (message: any) => {
+  //     const currentUserId = socket?.auth?.token;
+  //     const otherUserId =
+  //       message.sender_id === currentUserId ? message.receiver_id : message.sender_id;
+
+  //     // Проверяем, есть ли уже пользователь в списке
+  //     if (!chatUsers.some((user) => user._id === otherUserId)) {
+  //       const { data: userData } = await request<User>({
+  //         endpoint: `/api/user/${otherUserId}`,
+  //         method: "GET",
+  //       });
+
+  //       if (userData) {
+  //         const updatedUsers = [userData, ...chatUsers];
+  //         setChatUsers(updatedUsers);
+  //         localStorage.setItem("chatUsers", JSON.stringify(updatedUsers));
+  //       }
+  //     }
+  //   };
+  //   socket?.on("receiveMessage", handleNewMessage);
+  //   return () => {
+  //     socket?.off("receiveMessage", handleNewMessage);
+  //   };
+  // }, [chatUsers, request]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const { data } = await request<User[]>({
-        endpoint: "/api/user/all",
-        method: "GET",
-      });
-      if (data) {
-        const filteredUsers = data.filter(
-          (user) => !recentUsers.some((recentUser) => recentUser._id === user._id)
-        );
-        setAllUsers(filteredUsers);
+    const socket = socketManager.getSocket();
+
+    const handleNewMessage = async (message: any) => {
+      const otherUserId =
+        message.sender_id === currentUser?._id ? message.receiver_id : message.sender_id;
+
+      if (otherUserId !== currentUser?._id && !chatUsers.some((user) => user._id === otherUserId)) {
+        const { data: userData } = await request<User>({
+          endpoint: `/api/user/${otherUserId}`,
+          method: "GET",
+        });
+
+        if (userData) {
+          const updatedUsers = [userData, ...chatUsers];
+          setChatUsers(updatedUsers);
+          localStorage.setItem("chatUsers", JSON.stringify(updatedUsers));
+        }
       }
     };
 
-    fetchUsers();
-  }, [recentUsers]);
+    socket?.on("receiveMessage", handleNewMessage);
+    return () => {
+      socket?.off("receiveMessage", handleNewMessage);
+    };
+  }, [chatUsers, currentUser]);
 
   const handleUserSelect = (userId: string) => {
     onSelectUser(userId);
@@ -46,8 +88,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
 
   return (
     <div className="bg-primary">
-      {/* Недавние чаты */}
-      {recentUsers.map((user) => (
+      {chatUsers.map((user) => (
         <div
           key={user._id}
           onClick={() => handleUserSelect(user._id)}
@@ -64,34 +105,9 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
           </div>
           <div>
             <p className="font-semibold">{user.username}</p>
-            <p className="text-sm text-textGrayColor">Recent chat</p>
-          </div>
-        </div>
-      ))}
-
-      {/* Все пользователи */}
-      <div className="px-4 py-2 text-sm text-textGrayColor">All users</div>
-      {allUsers.map((user) => (
-        <div
-          key={user._id}
-          onClick={() => {
-            onSelectUser(user._id);
-            const newRecentUser = {
-              _id: user._id,
-              username: user.username,
-              profile_image: user.profile_image,
-            };
-            const updatedRecentUsers = [newRecentUser, ...recentUsers].slice(0, 20);
-            localStorage.setItem("recentChats", JSON.stringify(updatedRecentUsers));
-            setRecentUsers(updatedRecentUsers as User[]);
-          }}
-          className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
-            ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
-        >
-          <ProfileBadge src={user.profile_image} maxWidth={40} />
-          <div>
-            <p className="font-semibold">{user.username}</p>
-            <p className="text-sm text-textGrayColor">Push to start a chat</p>
+            <p className="text-sm text-textGrayColor">
+              {unreadByUser[user._id] > 0 ? `${unreadByUser[user._id]} new messages` : "Chat"}
+            </p>
           </div>
         </div>
       ))}

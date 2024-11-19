@@ -64,7 +64,7 @@ export default function ChatWindow({ targetUserId }: ChatWindowProps) {
   }
 
   if (!isConnected) {
-    return <div className="text-yellow-500 text-center p-4">Переподключение...</div>;
+    return <div className="text-yellow-500 text-center p-4">Reconnecting...</div>;
   }
 
   return (
