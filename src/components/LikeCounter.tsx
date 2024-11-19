@@ -82,7 +82,12 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
           await createNotification(
             currentPost.user_id._id,
             "like",
-            `${currentUser.username} liked your post`
+            {
+              username: currentUser.username,
+              message: "liked your post",
+            },
+            currentUser.profile_image || "",
+            currentPost.image_url || ""
           );
         }
       }

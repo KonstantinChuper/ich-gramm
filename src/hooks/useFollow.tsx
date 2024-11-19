@@ -97,7 +97,11 @@ export function useFollow({ targetUserId, onFollowChange }: UseFollowProps) {
           await createNotification(
             targetUserId,
             "follow",
-            `${currentUser.username} started following you`
+            {
+              username: currentUser.username,
+              message: "started following you",
+            },
+            currentUser.profile_image || ""
           );
         }
       }

@@ -9,7 +9,12 @@ interface Notification {
   _id: string;
   user_id: string;
   type: string;
-  content: string;
+  content: {
+    username: string;
+    message: string;
+  };
+  avatar: string;
+  postImg?: string;
   is_read: boolean;
   created_at: string;
 }
@@ -22,10 +27,19 @@ interface NotificationContextType {
   fetchNotifications: (user_id: string) => Promise<void>;
   markAsRead: (notificationId: string) => Promise<void>;
   deleteNotification: (notificationId: string) => Promise<void>;
-  createNotification: (user_id: string, type: string, content: string) => Promise<void>;
+  createNotification: (
+    user_id: string,
+    type: string,
+    content: {
+      username: string;
+      message: string;
+    },
+    avatar: string,
+    postImg?: string
+  ) => Promise<void>;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const NotificationContext = createContext<NotificationContextType>({} as NotificationContextType);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -75,7 +89,13 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   );
 
   const createNotification = useCallback(
-    async (user_id: string, type: string, content: string) => {
+    async (
+      user_id: string,
+      type: string,
+      content: { username: string; message: string },
+      avatar: string,
+      postImg?: string
+    ) => {
       if (user_id === currentUser?._id) {
         return;
       }
@@ -88,7 +108,12 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             user_id,
             sender_id: currentUser?._id,
             type,
-            content,
+            content: {
+              username: content.username,
+              message: content.message,
+            },
+            avatar,
+            postImg: postImg || null,
           },
         });
       } catch (error) {

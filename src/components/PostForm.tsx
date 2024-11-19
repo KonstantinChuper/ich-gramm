@@ -29,7 +29,7 @@ export default function PostForm({ postId }: PostFormProps) {
         console.error("Could not fetch post data");
         return;
       }
-      
+
       const postOwnerId = postData.user_id?._id;
 
       if (!postOwnerId) {
@@ -45,7 +45,12 @@ export default function PostForm({ postId }: PostFormProps) {
         await createNotification(
           postOwnerId,
           "comment",
-          `${currentUser.username} commented on your post`
+          {
+            username: currentUser.username,
+            message: "commented on your post",
+          },
+          currentUser.profile_image || "",
+          postData.image_url || ""
         );
       }
 
