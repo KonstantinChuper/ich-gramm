@@ -2,14 +2,14 @@
 
 import React, { useEffect } from "react";
 import Image from "next/image";
-import likeIcon from "@/assets/menu-icons/notification.svg";
-import likeIconFilled from "@/assets/menu-icons/notification-filled.svg";
 import messageIcon from "@/assets/message.svg";
 import { useAxios } from "@/hooks/useAxios";
 import useUser from "@/hooks/useUser";
 import { usePostContext } from "@/contexts/PostContext";
 import { useNotificationContext } from "@/contexts/NotificationContext";
+import { NotificationsIcon } from "./icons/Icons";
 import usePost from "@/hooks/usePost";
+import { MessageIcon } from "./icons/Icons";
 
 interface LikeCounterProps {
   postId: string;
@@ -101,16 +101,11 @@ export default function LikeCounter({ postId }: LikeCounterProps) {
       <div className="flex gap-[14px]">
         <button
           onClick={handleLikeClick}
-          className={`transition-transform ${isLiked ? "scale-90" : "scale-100"}`}
+          className={`transition-transform ${isLiked ? "scale-110" : "scale-100"}`}
         >
-          <Image
-            src={isLiked ? likeIconFilled : likeIcon}
-            alt="heart icon"
-            width={24}
-            height={24}
-          />
+          <NotificationsIcon isFilled={isLiked} />
         </button>
-        <Image src={messageIcon} alt="comment icon" width={24} height={24} />
+        <MessageIcon />
       </div>
       <p className="pt-[8px] text-[12px] font-semibold">{likesCount} likes</p>
     </div>

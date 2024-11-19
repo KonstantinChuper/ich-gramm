@@ -41,7 +41,7 @@ export const useMessage = (targetUserId?: string) => {
         lastSentMessage.current &&
         newMessage.message_text === lastSentMessage.current.text &&
         newMessage.sender_id === currentUser._id &&
-        Date.now() - lastSentMessage.current.timestamp < 1000 // проверяем временной интервал
+        Date.now() - lastSentMessage.current.timestamp < 1000
       ) {
         return;
       }
@@ -86,7 +86,6 @@ export const useMessage = (targetUserId?: string) => {
 
       const trimmedMessage = messageText.trim();
 
-      // Сохраняем информацию о последнем отправленном сообщении
       lastSentMessage.current = {
         text: trimmedMessage,
         timestamp: Date.now(),
@@ -100,7 +99,6 @@ export const useMessage = (targetUserId?: string) => {
         created_at: new Date(),
       };
 
-      // Оптимистичное обновление UI
       setMessages((prev) => [...prev, newMessage]);
 
       socket.current.emit("sendMessage", {

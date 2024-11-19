@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import heroLogo from "@/assets/hero-logo.svg";
+import HeroLogo from "@/components/icons/HeroLogo";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { menuItems } from "@/data/menuItems";
+import { menuItems } from "@/components/icons/menuIcons";
 import ProfileBadge from "./ProfileBadge";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
@@ -14,6 +14,7 @@ import useUser from "@/hooks/useUser";
 import CreatePostModal from "./ModalCreatePost";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 import { useNotificationContext } from "@/contexts/NotificationContext";
+import ThemeToggle from "./ThemeToggle";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -72,9 +73,12 @@ export default function AsideMenu() {
         className="fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor border-b-0 overflow-auto z-50 bg-secondary"
       >
         <nav className="space-y-7 fixed">
-          <Link href={"/"} className="max-w-[94px] max-h-[50px]">
-            <Image src={heroLogo} width={90} height={50} alt="heroLogo" />
-          </Link>
+          <div className="flex items-center justify-between">
+            <ThemeToggle />
+            <Link href={"/"} className="max-w-[94px] max-h-[50px]">
+              <HeroLogo />
+            </Link>
+          </div>
           {menuItems.map((item) => (
             <li key={item.href} className="flex items-center">
               {item.action === "link" ? (
@@ -86,16 +90,7 @@ export default function AsideMenu() {
                   onClick={() => handleItemClick(item)}
                 >
                   <div className="relative">
-                    <Image
-                      src={
-                        pathname === item.href && !isSidebarOpen
-                          ? item.icon.filled
-                          : item.icon.default
-                      }
-                      alt={`${item.label} Icon`}
-                      width={22}
-                      height={22}
-                    />
+                    <item.Icon isFilled={pathname === item.href && !isSidebarOpen} />
                     {item.label === "Messages" && unreadCount > 0 && (
                       <span className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
                         {unreadCount}
@@ -112,16 +107,7 @@ export default function AsideMenu() {
                   }`}
                 >
                   <div className="relative">
-                    <Image
-                      src={
-                        activeSidebarContent === item.href && isSidebarOpen
-                          ? item.icon.filled
-                          : item.icon.default
-                      }
-                      alt={`${item.label} Icon`}
-                      width={22}
-                      height={22}
-                    />
+                    <item.Icon isFilled={activeSidebarContent === item.href && isSidebarOpen} />
                     {item.label === "Notifications" && unreadNotifications > 0 && (
                       <span className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
                         {unreadNotifications}

@@ -4,7 +4,6 @@ import "./globals.css";
 import ClientLayout from "@/components/ClientLayout";
 import { Providers } from "@/theme/provider";
 import ThemeWrapper from "@/theme/theme-wraper";
-import ThemeToggle from "@/components/ThemeToggle";
 import { UnreadMessagesProvider } from "@/contexts/UnreadMessageContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { SocketProvider } from "@/contexts/SocketContext";
@@ -33,7 +32,6 @@ export default function RootLayout({
             <NotificationProvider>
               <UnreadMessagesProvider>
                 <ThemeWrapper>
-                  <ThemeToggle />
                   <ClientLayout>{children}</ClientLayout>
                 </ThemeWrapper>
               </UnreadMessagesProvider>
