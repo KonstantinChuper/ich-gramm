@@ -1,6 +1,17 @@
 import { MENU_ICONS } from "./constants/images";
 
-export const menuItems = [
+interface MenuItem {
+  href: string;
+  label: string;
+  Icon?: React.ReactNode;
+  icon?: {
+    default: string;
+    filled: string;
+  };
+  action: "link" | "toggleSidebar" | "toggleModal";
+}
+
+export const menuItems: MenuItem[] = [
   {
     href: "/",
     icon: MENU_ICONS.HOME,

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import HeroLogo from "@/components/icons/HeroLogo";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { menuItems } from "@/components/icons/menuIcons";
+import { menuItems } from "@/components/icons/menu/menuIcons";
 import ProfileBadge from "./ProfileBadge";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
@@ -15,41 +14,28 @@ import CreatePostModal from "./ModalCreatePost";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import ThemeToggle from "./ThemeToggle";
+import { useMenuActions } from "@/hooks/useMenuActions";
 
 export default function AsideMenu() {
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeSidebarContent, setActiveSidebarContent] = useState<string | null>(null);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const isProfilePage = pathname === "/profile" || pathname === "/profile/edit";
   const { fetchUser, user } = useUser();
   const { unreadCount } = useUnreadMessages();
   const { unreadCount: unreadNotifications } = useNotificationContext();
-
-  const handleToggleSidebar = (contentId: string) => {
-    setIsSidebarOpen((prev) => (activeSidebarContent === contentId ? !prev : true));
-    setActiveSidebarContent(contentId);
-  };
+  const {
+    handleMenuItemClick,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    activeSidebarContent,
+    isCreateModalOpen,
+    setIsCreateModalOpen,
+  } = useMenuActions();
 
   useEffect(() => {
     if (pathname === "/profile") {
       fetchUser();
     }
   }, [pathname]);
-
-  const handleItemClick = (item: (typeof menuItems)[0]) => {
-    switch (item.action) {
-      case "toggleSidebar":
-        handleToggleSidebar(item.href);
-        break;
-      case "toggleModal":
-        setIsCreateModalOpen(true);
-        break;
-      case "link":
-        setIsSidebarOpen(false);
-        break;
-    }
-  };
 
   const handleAsideClick = () => {
     if (isCreateModalOpen) {
@@ -61,12 +47,6 @@ export default function AsideMenu() {
 
   return (
     <div className="relative z-50">
-      {isSidebarOpen && (
-        <div
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black opacity-65 z-30"
-        ></div>
-      )}
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <aside
         onClick={handleAsideClick}
@@ -87,7 +67,7 @@ export default function AsideMenu() {
                   className={`text-sm flex items-center gap-4 ${
                     pathname === item.href && !isSidebarOpen ? "font-bold" : ""
                   }`}
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => handleMenuItemClick(item)}
                 >
                   <div className="relative">
                     <item.Icon isFilled={pathname === item.href && !isSidebarOpen} />
@@ -101,7 +81,7 @@ export default function AsideMenu() {
                 </Link>
               ) : (
                 <button
-                  onClick={() => handleItemClick(item)}
+                  onClick={() => handleMenuItemClick(item)}
                   className={`text-sm flex items-center gap-4 relative ${
                     activeSidebarContent === item.href && isSidebarOpen ? "font-bold" : ""
                   }`}
@@ -125,7 +105,7 @@ export default function AsideMenu() {
           </Link>
         </nav>
       </aside>
-      <SideBar toggleSidebar={isSidebarOpen}>
+      <SideBar toggleSidebar={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
         {activeSidebarContent === "/search" && (
           <SearchSideBar onClose={() => setIsSidebarOpen(false)} />
         )}

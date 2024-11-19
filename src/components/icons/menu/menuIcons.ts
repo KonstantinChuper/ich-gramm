@@ -7,7 +7,17 @@ import {
   CreateIcon,
 } from "@/components/icons/Icons";
 
-export const menuItems = [
+interface IconProps {
+  isFilled?: boolean;
+}
+type IconType = React.ComponentType<IconProps>;
+
+export const menuItems: {
+  href: string;
+  Icon: IconType;
+  label: string;
+  action: "link" | "toggleSidebar" | "toggleModal";
+}[] = [
   {
     href: "/",
     Icon: HomeIcon,
