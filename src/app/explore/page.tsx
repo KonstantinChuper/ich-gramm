@@ -1,14 +1,14 @@
 "use client";
 
-import Container from "@/components/Container";
-import React, { useEffect, useState } from "react";
-import usePost from "@/hooks/usePost";
+import { useEffect, useState } from "react";
+import { Post } from "@/types/Post";
 import Image from "next/image";
+import usePost from "@/hooks/usePost";
 import Spinner from "@/components/Spiner";
 import LikeIcon from "@/components/icons/LikeIcon";
-import MessageIcon from "@/components/icons/MessageIcon";
-import { Post } from "@/types/Post";
+import Container from "@/components/Container";
 import ModalPost from "@/components/ModalPost";
+import MessageIcon from "@/components/icons/MessageIcon";
 
 export default function ExplorePage() {
   const { posts, isLoading, fetchExplorePosts } = usePost();

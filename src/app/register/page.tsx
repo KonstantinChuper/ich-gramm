@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Form from "@/components/Form";
-import HeroLogo from "@/components/HeroLogo";
-import Input from "@/components/Input";
-import Link from "next/link";
-import HaveJobBanner from "@/components/HaveJobBanner";
 import { formValidation } from "@/utils/formValidation";
 import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
+import HaveJobBanner from "@/components/HaveJobBanner";
+import HeroLogo from "@/components/HeroLogo";
+import Input from "@/components/Input";
+import Form from "@/components/Form";
+import Link from "next/link";
 
 interface RegisterFormData {
   email: string;

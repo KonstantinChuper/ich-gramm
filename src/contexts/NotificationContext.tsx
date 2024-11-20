@@ -162,6 +162,13 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     [request]
   );
 
+  useEffect(() => {
+    if (currentUser?._id) {
+      console.log("Fetching notifications for user:", currentUser._id);
+      fetchNotifications(currentUser._id);
+    }
+  }, [currentUser?._id]);
+
   return (
     <NotificationContext.Provider
       value={{

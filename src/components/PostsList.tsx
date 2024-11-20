@@ -49,7 +49,6 @@ export default function PostsList() {
         </div>
         <NoMorePostsBanner />
       </div>
-
       {selectedPost && (
         <ModalPost
           post={selectedPost}

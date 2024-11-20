@@ -1,9 +1,9 @@
 "use client";
 
-import ProfileHeader from "@/components/ProfileHeader";
-import Container from "@/components/Container";
-import UserPostListById from "@/components/UserPostListById";
 import { useParams } from "next/navigation";
+import Container from "@/components/Container";
+import ProfileHeader from "@/components/ProfileHeader";
+import UserPostListById from "@/components/UserPostListById";
 
 export default function UserProfile() {
   const params = useParams();

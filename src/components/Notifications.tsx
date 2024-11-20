@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { getTimeAgo } from "@/utils/helpers";
 import { useNotificationContext } from "@/contexts/NotificationContext";
 import useUser from "@/hooks/useUser";
@@ -9,16 +8,8 @@ import closeIcon from "@/assets/close-icon.svg";
 import ProfileBadge from "./ProfileBadge";
 
 export default function Notifications() {
-  const { user: currentUser } = useUser();
-  const { notifications, isLoading, fetchNotifications, markAsRead, deleteNotification } =
+  const { notifications, isLoading, markAsRead, deleteNotification } =
     useNotificationContext();
-
-  useEffect(() => {
-    if (currentUser?._id) {
-      console.log("Fetching notifications for user:", currentUser._id);
-      fetchNotifications(currentUser._id);
-    }
-  }, [currentUser?._id]);
 
   return (
     <div

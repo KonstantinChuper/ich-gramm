@@ -5,7 +5,7 @@ export default function NoMorePostsBanner() {
     <div className="flex flex-col justify-center items-center pt-12 pb-14">
       <Image
         src={"/no-more-posts-banner-image.svg"}
-        alt="marked"
+        alt="banner"
         width={83}
         height={83}
       />

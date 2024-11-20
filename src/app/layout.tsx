@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
-import "./globals.css";
-import ClientLayout from "@/components/ClientLayout";
-import { Providers } from "@/theme/provider";
-import ThemeWrapper from "@/theme/theme-wraper";
 import { UnreadMessagesProvider } from "@/contexts/UnreadMessageContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { SocketProvider } from "@/contexts/SocketContext";
+import { Providers } from "@/theme/provider";
+import { Roboto } from "next/font/google";
+import ClientLayout from "@/components/ClientLayout";
+import ThemeWrapper from "@/theme/theme-wraper";
+import "./globals.tw.css";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700", "900"],

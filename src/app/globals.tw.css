@@ -11,7 +11,6 @@
       rgba(252, 176, 69, 1) 100%
     );
 
-    /* Светлая тема */
     --primary-color: #0095F6;
     --border-color: #DBDBDB;
     --link-color: #00376B;
@@ -23,7 +22,6 @@
   }
 
   .dark {
-    /* Темная тема */
     --primary-color: #0095F6;
     --border-color: #363636;
     --link-color: #E4E6EB;

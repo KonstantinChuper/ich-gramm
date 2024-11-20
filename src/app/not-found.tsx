@@ -1,5 +1,4 @@
 import HeroImage from "@/components/HeroImage";
-import React from "react";
 
 export default function NotFound() {
   return (

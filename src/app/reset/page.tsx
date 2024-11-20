@@ -1,10 +1,9 @@
-import React from "react";
-import Header from "./Header";
-import Form from "@/components/Form";
 import lockIcon from "@/assets/lock-icon.svg";
+import Divider from "@/components/Divider";
+import Header from "./Header";
 import Image from "next/image";
 import Input from "@/components/Input";
-import Divider from "@/components/Divider";
+import Form from "@/components/Form";
 import Link from "next/link";
 
 export default function page() {
