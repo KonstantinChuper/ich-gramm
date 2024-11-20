@@ -18,7 +18,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-lg fixed top-[30px] left-1 bg-transparent z-[500]"
+      className="p-2 rounded-lg fixed top-[30px] md:left-1 left-2 bg-transparent z-[500]"
     >
       {theme === "dark" ? (
         <svg

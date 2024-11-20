@@ -42,7 +42,6 @@ export default function ExplorePage() {
     <Container maxWidth="935px" className="!mr-0">
       <div className="grid grid-cols-3 auto-rows-[293px] gap-1 my-20">
         {posts.map((post, index) => {
-
           const blockNumber = Math.floor(index / 12);
           const positionInBlock = index % 12;
           const isFirstBlockPattern =

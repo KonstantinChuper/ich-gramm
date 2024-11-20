@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import closeIcon from "@/assets/close-icon.svg";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
 import { User } from "@/types/User";
 import ProfileBadge from "./ProfileBadge";
+import closeIcon from "@/assets/close-icon.svg";
+import Image from "next/image";
 import Link from "next/link";
 
 interface SearchBarInputProps {

@@ -1,10 +1,10 @@
 "use client";
 
-import ProfileBadge from "./ProfileBadge";
 import { getTimeAgo } from "@/utils/helpers";
-import useComments from "@/hooks/useComments";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import ProfileBadge from "./ProfileBadge";
+import useComments from "@/hooks/useComments";
 import useUser from "@/hooks/useUser";
 
 interface CommentListProps {

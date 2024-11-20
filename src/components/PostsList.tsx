@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import Spinner from "./Spiner";
-import Post from "./Post";
+import { usePostContext } from "@/contexts/PostContext";
 import NoMorePostsBanner from "@/components/NoMorePostsBanner";
 import ModalPost from "./ModalPost";
-import { usePostContext } from "@/contexts/PostContext";
+import Spinner from "./Spiner";
+import Post from "./Post";
 
 export default function PostsList() {
   const { posts, isLoading, selectedPost, setSelectedPost, fetchFeedPosts } = usePostContext();

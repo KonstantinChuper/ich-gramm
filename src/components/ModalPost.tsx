@@ -1,18 +1,18 @@
 "use client";
 
-import Image from "next/image";
-import ProfileBadge from "./ProfileBadge";
-import { Post } from "@/types/Post";
-import menuBtn from "@/assets/Menu-buttons.svg";
-import { getTimeAgo } from "@/utils/helpers";
-import PostForm from "./PostForm";
-import CommentList from "./CommentList";
 import { useEffect, useState } from "react";
+import { getTimeAgo } from "@/utils/helpers";
 import { useAxios } from "@/hooks/useAxios";
 import { useRouter } from "next/navigation";
+import { Post } from "@/types/Post";
+import ProfileBadge from "./ProfileBadge";
+import CommentList from "./CommentList";
 import LikeCounter from "./LikeCounter";
+import PostForm from "./PostForm";
+import menuBtn from "@/assets/Menu-buttons.svg";
 import useUser from "@/hooks/useUser";
 import usePost from "@/hooks/usePost";
+import Image from "next/image";
 
 interface ModalPostProps {
   post: Post;
@@ -88,7 +88,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-10 ml-[245px] flex items-center justify-center">
+    <div className="fixed inset-0 z-10 aside-margin flex items-center justify-center">
       <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
 
       {/* Modal window */}
@@ -134,7 +134,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg shadow-lg border border-borderColor z-[110] w-[400px] md:ml-[145px]"
                     style={{ position: "fixed" }}
                   >
-                    {currentUser?._id === post.user_id ? (
+                    {currentUser?._id === post.user_id._id ? (
                       <>
                         <button
                           onClick={handleDelete}

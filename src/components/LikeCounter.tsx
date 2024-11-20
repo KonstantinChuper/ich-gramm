@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
-import Image from "next/image";
-import messageIcon from "@/assets/message.svg";
+import { useEffect } from "react";
 import { useAxios } from "@/hooks/useAxios";
-import useUser from "@/hooks/useUser";
 import { usePostContext } from "@/contexts/PostContext";
 import { useNotificationContext } from "@/contexts/NotificationContext";
-import { NotificationsIcon } from "./icons/Icons";
+import { NotificationsIcon, MessageIcon } from "./icons/Icons";
 import usePost from "@/hooks/usePost";
-import { MessageIcon } from "./icons/Icons";
+import useUser from "@/hooks/useUser";
 
 interface LikeCounterProps {
   postId: string;

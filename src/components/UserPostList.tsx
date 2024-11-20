@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect  } from "react";
-import ModalPost from "./ModalPost";
 import { usePostContext } from "@/contexts/PostContext";
 import PictureLoading from "./PictureLoading";
-import LikeIcon from "./icons/LikeIcon";
 import MessageIcon from "./icons/MessageIcon";
+import ModalPost from "./ModalPost";
+import LikeIcon from "./icons/LikeIcon";
+import Image from "next/image";
 
 export default function UserPostList() {
   const { posts, isLoading, error, selectedPost, setSelectedPost, fetchUserPosts } =

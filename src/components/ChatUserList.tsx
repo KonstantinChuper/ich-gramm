@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useAxios } from "@/hooks/useAxios";
-import ProfileBadge from "@/components/ProfileBadge";
 import { User } from "@/types/User";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
+import ProfileBadge from "@/components/ProfileBadge";
 import socketManager from "@/services/socketManager";
 import useUser from "@/hooks/useUser";
 
@@ -24,35 +24,6 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
     const filteredUsers = savedUsers.filter((user: User) => user._id !== currentUser?._id);
     setChatUsers(filteredUsers);
   }, [currentUser]);
-
-  // Обработка новых сообщений
-  // useEffect(() => {
-  //   const socket = socketManager.getSocket();
-
-  //   const handleNewMessage = async (message: any) => {
-  //     const currentUserId = socket?.auth?.token;
-  //     const otherUserId =
-  //       message.sender_id === currentUserId ? message.receiver_id : message.sender_id;
-
-  //     // Проверяем, есть ли уже пользователь в списке
-  //     if (!chatUsers.some((user) => user._id === otherUserId)) {
-  //       const { data: userData } = await request<User>({
-  //         endpoint: `/api/user/${otherUserId}`,
-  //         method: "GET",
-  //       });
-
-  //       if (userData) {
-  //         const updatedUsers = [userData, ...chatUsers];
-  //         setChatUsers(updatedUsers);
-  //         localStorage.setItem("chatUsers", JSON.stringify(updatedUsers));
-  //       }
-  //     }
-  //   };
-  //   socket?.on("receiveMessage", handleNewMessage);
-  //   return () => {
-  //     socket?.off("receiveMessage", handleNewMessage);
-  //   };
-  // }, [chatUsers, request]);
 
   useEffect(() => {
     const socket = socketManager.getSocket();

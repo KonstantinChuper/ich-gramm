@@ -1,10 +1,4 @@
 import Image from "next/image";
-import React from "react";
-
-// interface HeroImageProps {
-//   width: number;
-//   height: number;
-// }
 
 export default function HeroImage() {
   return (

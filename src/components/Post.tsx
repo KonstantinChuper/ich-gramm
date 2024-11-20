@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
-import ProfileBadge from "./ProfileBadge";
-import Image from "next/image";
-import useUser from "@/hooks/useUser";
-import type { Post } from "@/types/Post";
+import { useState } from "react";
 import { getTimeAgo } from "@/utils/helpers";
 import { useRouter } from "next/navigation";
-import LikeCounter from "./LikeCounter";
 import { countTextLetters } from "@/utils/helpers";
+import type { Post } from "@/types/Post";
+import LikeCounter from "./LikeCounter";
+import ProfileBadge from "./ProfileBadge";
+import useUser from "@/hooks/useUser";
+import Image from "next/image";
 
 interface PostProps {
   post: Post;
 }
 
 export default function Post({ post }: PostProps) {
-  const { user: postAuthor } = useUser(post.user_id);
+  const { user: postAuthor } = useUser(post.user_id._id);
   const [showFull, setShowFull] = useState(false);
   const MAX_TEXT_LENGTH = 13;
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function Post({ post }: PostProps) {
   };
 
   return (
-    <div className="border-b border-borderColor pb-[37px]">
+    <div className="border-b border-borderColor pb-9">
       <div onClick={handleUserClick} className="flex gap-3 items-center cursor-pointer">
         <ProfileBadge
           src={postAuthor?.profile_image || "/default-profile-image.svg"}
@@ -60,12 +60,12 @@ export default function Post({ post }: PostProps) {
 
       <Image src={post.image_url} alt="post image" width={550} height={555} className="pt-[12px]" />
 
-      <div className="pt-[12px]">
+      <div className="pt-3">
         <LikeCounter postId={post._id} />
       </div>
 
       {post.caption && (
-        <p className="text-[12px]">
+        <p className="text-3">
           <span className="font-semibold">{postAuthor?.username}</span>{" "}
           {formatCaption(post.caption)}
           {shouldShowMoreButton(post.caption) && (

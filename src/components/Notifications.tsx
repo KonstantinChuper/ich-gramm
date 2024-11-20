@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import useUser from "@/hooks/useUser";
 import { getTimeAgo } from "@/utils/helpers";
+import { useNotificationContext } from "@/contexts/NotificationContext";
+import useUser from "@/hooks/useUser";
 import Image from "next/image";
 import closeIcon from "@/assets/close-icon.svg";
-import { useNotificationContext } from "@/contexts/NotificationContext";
 import ProfileBadge from "./ProfileBadge";
 
 export default function Notifications() {
@@ -21,7 +21,15 @@ export default function Notifications() {
   }, [currentUser?._id]);
 
   return (
-    <div className="p-6">
+    <div
+      className="p-6 h-full overflow-y-auto [&::-webkit-scrollbar]:w-2
+         [&::-webkit-scrollbar-track]:rounded-full
+         [&::-webkit-scrollbar-track]:bg-gray-100
+         [&::-webkit-scrollbar-thumb]:rounded-full
+         [&::-webkit-scrollbar-thumb]:bg-gray-300
+         dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+    >
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Notifications</h1>
         {notifications.length > 0 && (

@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function PictureLoading() {
   return (
     <div className="pt-[87px] grid grid-cols-3 gap-1">

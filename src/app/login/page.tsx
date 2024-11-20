@@ -1,7 +1,6 @@
 import HaveJobBanner from "@/components/HaveJobBanner";
 import HeroImage from "@/components/HeroImage";
 import LoginForm from "@/components/LoginForm";
-import React from "react";
 
 export default function page() {
   return (

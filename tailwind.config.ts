@@ -12,6 +12,9 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
+      screens: {
+        md: "810px",
+      },
       colors: {
         primaryColor: "var(--primary-color)",
         borderColor: "var(--border-color)",
@@ -38,6 +41,15 @@ const config: Config = {
   plugins: [
     plugin(function ({ addComponents }) {
       addComponents({
+        ".aside-margin": {
+          "margin-left": "0",
+          "@screen sm": {
+            "margin-left": "64px",
+          },
+          "@screen md": {
+            "margin-left": "245px",
+          },
+        },
         ".btn": {
           paddingTop: "7px",
           paddingBottom: "7px",

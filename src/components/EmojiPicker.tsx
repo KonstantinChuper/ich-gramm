@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { emojis } from "@/data/emojis";
+import Image from "next/image";
 
 interface EmojiPickerProps {
   onEmojiSelect: (emoji: string) => void;
@@ -41,7 +41,12 @@ export default function EmojiPicker({ onEmojiSelect }: EmojiPickerProps) {
 
       {isOpen && (
         <div className="absolute bottom-full left-0 min-w-[270px] w-full mb-2 bg-primary border rounded-lg shadow-lg p-2 z-10">
-          <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
+          <div
+            className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto [&::-webkit-scrollbar]:w-2
+               [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100
+               [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300
+               dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+          >
             {emojis.map((emoji, index) => (
               <button
                 key={index}

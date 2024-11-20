@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 
 interface ProfileBadgeProps {
@@ -11,7 +10,7 @@ interface ProfileBadgeProps {
 }
 
 export default function ProfileBadge({
-  maxWidth = 24,
+  maxWidth = 26,
   className,
   has_stories = false,
   src,

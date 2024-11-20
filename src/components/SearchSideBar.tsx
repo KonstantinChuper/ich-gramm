@@ -1,4 +1,3 @@
-import React from "react";
 import SearchBarInput from "./SearchBarInput";
 
 interface SearchSideBarProps {

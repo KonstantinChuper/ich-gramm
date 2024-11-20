@@ -1,11 +1,11 @@
 "use client";
 
-import ProfileBadge from "@/components/ProfileBadge";
-import useUser from "@/hooks/useUser";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import ChatUserList from "@/components/ChatUserList";
 import ChatWindow from "@/components/ChatWindow";
-import { useSearchParams } from "next/navigation";
+import ProfileBadge from "@/components/ProfileBadge";
+import useUser from "@/hooks/useUser";
 
 export default function MessagesPage() {
   const { user } = useUser();
@@ -25,7 +25,7 @@ export default function MessagesPage() {
   }, [searchParams]);
 
   return (
-    <div className="ml-[245px] flex h-full bg-primary">
+    <div className="md:ml-[245px] flex h-full bg-primary ml-16">
       <div className="max-w-[350px] border-r border-borderColor bg-primary flex-1">
         <div className="sticky top-0">
           <div className="flex items-center gap-4 p-6">

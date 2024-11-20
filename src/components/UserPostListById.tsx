@@ -1,13 +1,13 @@
 "use client";
 
-import usePost from "@/hooks/usePost";
-import Image from "next/image";
 import { useEffect, useState } from "react";
-import ModalPost from "./ModalPost";
 import { Post } from "@/types/Post";
 import PictureLoading from "./PictureLoading";
-import LikeIcon from "./icons/LikeIcon";
 import MessageIcon from "./icons/MessageIcon";
+import ModalPost from "./ModalPost";
+import LikeIcon from "./icons/LikeIcon";
+import usePost from "@/hooks/usePost";
+import Image from "next/image";
 
 interface UserPostListByIdProps {
   userId: string;

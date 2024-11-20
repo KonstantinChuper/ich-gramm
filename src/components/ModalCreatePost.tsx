@@ -98,7 +98,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-20 ml-[245px] flex items-center justify-center">
+    <div className="fixed inset-0 z-20 aside-margin flex items-center justify-center">
       <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
 
       <div className="bg-secondary rounded-xl w-full max-w-[913px] max-h-[913px] relative z-50 mx-5">

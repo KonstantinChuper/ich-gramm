@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect } from "react";
-import HeroLogo from "@/components/icons/HeroLogo";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { menuItems } from "@/components/icons/menu/menuIcons";
-import ProfileBadge from "./ProfileBadge";
-import SideBar from "./SideBar";
-import SearchSideBar from "./SearchSideBar";
-import Notifications from "./Notifications";
-import useUser from "@/hooks/useUser";
-import CreatePostModal from "./ModalCreatePost";
+import { usePathname } from "next/navigation";
+import { useMenuActions } from "@/hooks/useMenuActions";
 import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 import { useNotificationContext } from "@/contexts/NotificationContext";
+import Link from "next/link";
+import SideBar from "./SideBar";
+import useUser from "@/hooks/useUser";
+import HeroLogo from "@/components/icons/HeroLogo";
 import ThemeToggle from "./ThemeToggle";
-import { useMenuActions } from "@/hooks/useMenuActions";
+import ProfileBadge from "./ProfileBadge";
+import SearchSideBar from "./SearchSideBar";
+import Notifications from "./Notifications";
+import CreatePostModal from "./ModalCreatePost";
 
 export default function AsideMenu() {
   const pathname = usePathname();
@@ -50,12 +50,13 @@ export default function AsideMenu() {
       <CreatePostModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
       <aside
         onClick={handleAsideClick}
-        className="fixed md:block md:w-[245px] md:h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor border-b-0 overflow-auto z-50 bg-secondary"
+        className="fixed w-16 md:w-[245px] h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor 
+        border-b-0 overflow-auto z-50 bg-secondary px-4 pt-[60px]"
       >
         <nav className="space-y-7 fixed">
-          <div className="flex items-center justify-between">
+          <div className="md:flex items-center justify-between">
             <ThemeToggle />
-            <Link href={"/"} className="max-w-[94px] max-h-[50px]">
+            <Link href={"/"} className="max-w-[94px] max-h-[50px] md:block hidden">
               <HeroLogo />
             </Link>
           </div>
@@ -72,12 +73,15 @@ export default function AsideMenu() {
                   <div className="relative">
                     <item.Icon isFilled={pathname === item.href && !isSidebarOpen} />
                     {item.label === "Messages" && unreadCount > 0 && (
-                      <span className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
+                      <span
+                        className="absolute -top-[6px] -right-2 bg-primaryColor text-white rounded-full w-4 h-4 flex items-center
+                       justify-center text-xs"
+                      >
                         {unreadCount}
                       </span>
                     )}
                   </div>
-                  {item.label}
+                  <p className="hidden md:block">{item.label}</p>
                 </Link>
               ) : (
                 <button
@@ -94,14 +98,16 @@ export default function AsideMenu() {
                       </span>
                     )}
                   </div>
-                  {item.label}
+                  <p className="hidden md:block">{item.label}</p>
                 </button>
               )}
             </li>
           ))}
           <Link href={"/profile"} className="flex gap-4 items-center pt-[59px]">
             <ProfileBadge src={user?.profile_image || "/default-profile-image.svg"} />
-            <p className={`${isProfilePage ? "font-bold" : "font-normal"}`}>Profile</p>
+            <p className={`${isProfilePage ? "font-bold" : "font-normal"} hidden md:block`}>
+              Profile
+            </p>
           </Link>
         </nav>
       </aside>

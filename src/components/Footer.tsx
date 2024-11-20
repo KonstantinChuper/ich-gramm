@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { menuItems } from "@/components/icons/menu/menuIcons";
 import { useMenuActions } from "@/hooks/useMenuActions";
+import Link from "next/link";
 import SideBar from "./SideBar";
 import SearchSideBar from "./SearchSideBar";
 import Notifications from "./Notifications";
@@ -19,7 +19,7 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="z-0 text-textGrayColor flex flex-col gap-[48px] items-center pt-5 pb-[61px] ml-[245px] h-[158px] 2xl:mr-[245px] bg-primary">
+      <footer className="z-0 aside-margin text-textGrayColor sm:flex flex-col gap-[48px] items-center pt-5 pb-[61px] h-[158px] 2xl:mr-[245px] bg-primary hidden">
         <nav className="flex gap-[40px] justify-center">
           {footerMenuItems.map((item, index) => (
             <div key={index} onClick={() => handleMenuItemClick(item)} className="cursor-pointer">

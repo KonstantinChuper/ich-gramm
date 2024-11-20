@@ -1,9 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { PostProvider } from "@/contexts/PostContext";
 import AsideMenu from "@/components/AsideMenu";
 import Footer from "@/components/Footer";
-import { PostProvider } from "@/contexts/PostContext";
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 

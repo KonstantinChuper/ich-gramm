@@ -1,4 +1,3 @@
-import React from "react";
 import { FloatingLabel } from "flowbite-react";
 
 type InputProps = {

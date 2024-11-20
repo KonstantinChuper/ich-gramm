@@ -9,8 +9,15 @@ export const useMenuActions = () => {
   const handleMenuItemClick = (item: MenuItem) => {
     switch (item.action) {
       case "toggleSidebar":
-        setIsSidebarOpen((prev) => (activeSidebarContent === item.href ? !prev : true));
-        setActiveSidebarContent(item.href);
+        if (activeSidebarContent === item.href) {
+          setIsSidebarOpen((prev) => !prev);
+          if (isSidebarOpen) {
+            setActiveSidebarContent(null);
+          }
+        } else {
+          setIsSidebarOpen(true);
+          setActiveSidebarContent(item.href);
+        }
         break;
       case "toggleModal":
         setIsCreateModalOpen(true);
@@ -19,11 +26,6 @@ export const useMenuActions = () => {
         setIsSidebarOpen(false);
         break;
     }
-    return {
-      isSidebarOpen,
-      activeSidebarContent,
-      isCreateModalOpen,
-    };
   };
 
   return {

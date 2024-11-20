@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import EmojiPicker from "./EmojiPicker";
-import useComments from "@/hooks/useComments";
 import { useNotificationContext } from "@/contexts/NotificationContext";
+import useComments from "@/hooks/useComments";
+import EmojiPicker from "./EmojiPicker";
 import useUser from "@/hooks/useUser";
 import usePost from "@/hooks/usePost";
 
@@ -37,10 +37,8 @@ export default function PostForm({ postId }: PostFormProps) {
         return;
       }
 
-      // Добавляем комментарий
       await addComment(comment.trim());
 
-      // Отправляем уведомление только если это не комментарий к своему посту
       if (postOwnerId !== currentUser._id) {
         await createNotification(
           postOwnerId,
