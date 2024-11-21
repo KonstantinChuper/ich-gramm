@@ -15,7 +15,7 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  const { user: postAuthor } = useUser(post.user_id._id);
+  const { user: postAuthor } = useUser(post.user_id);
   const [showFull, setShowFull] = useState(false);
   const MAX_TEXT_LENGTH = 13;
   const router = useRouter();

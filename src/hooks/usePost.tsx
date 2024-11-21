@@ -13,10 +13,6 @@ interface PostsResponse {
   posts: Post[];
 }
 
-interface SinglePostResponse {
-  post: Post;
-}
-
 export default function usePost() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentPost, setCurrentPost] = useState<Post | null>(null);
@@ -63,7 +59,7 @@ export default function usePost() {
       if (!token) return;
 
       try {
-        const { data, error } = await request<Post>({
+        const { data } = await request<Post[]>({
           endpoint: `/api/post/user/${userId}`,
           method: "GET",
           headers: {
@@ -71,9 +67,10 @@ export default function usePost() {
           },
         });
 
-        if (data) {
-          setCurrentPost(data);
-          return data;
+        if (data && "data" in data) {
+          setPosts(data);
+        } else if (Array.isArray(data)) {
+          setPosts(data);
         }
       } catch (error) {
         console.error("Error fetching user posts:", error);
