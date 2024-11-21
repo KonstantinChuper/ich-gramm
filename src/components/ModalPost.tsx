@@ -88,23 +88,23 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-10 aside-margin flex items-center justify-center">
-      <div className="fixed inset-0 bg-black bg-opacity-70" onClick={onClose} />
+    <div className="fixed inset-0 z-10 aside-margin flex md:items-center md:justify-center items-end">
+      <div className="fixed inset-0 md:bg-black bg-opacity-70" onClick={onClose} />
 
       {/* Modal window */}
-      <div className="bg-secondary rounded-md w-full relative max-h-[650px] max-w-[1000px] z-50 mx-4 flex">
+      <div className="bg-secondary rounded-md w-full relative max-h-[650px] max-w-[1000px] z-50 mx-4 flex md:flex-row flex-col">
         {/* Left side - image */}
-        <div className="flex-1 relative min-h-[650px] max-h-[650px] max-w-[577px] bg-secondary rounded-md">
+        <div className="flex-1 relative min-h-[650px] max-h-[650px] max-w-[577px] bg-secondary rounded-md hidden md:block">
           <Image
             src={post.image_url}
             alt={post.caption || "Post image"}
             fill
-            className="object-contain rounded-l-xl"
+            className="object-scale-down rounded-l-xl"
           />
         </div>
 
         {/* Right side - post information */}
-        <div className="flex flex-col border-l border-borderColor max-w-[433px] flex-1 bg-secondary rounded-md">
+        <div className="flex flex-col border-l border-borderColor md:min-h-[600px] md:max-w-[433px] max-w-full flex-shrink-0 flex-1 bg-secondary rounded-md">
           <div className="bg-secondary p-4 border-b border-borderColor flex justify-between rounded-md">
             <div
               onClick={handleUserClick}
@@ -134,7 +134,7 @@ export default function ModalPost({ post, isOpen, onClose }: ModalPostProps) {
                     className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-secondary rounded-lg shadow-lg border border-borderColor z-[110] w-[400px] md:ml-[145px]"
                     style={{ position: "fixed" }}
                   >
-                    {currentUser?._id === post.user_id._id ? (
+                    {currentUser?._id === post.user_id ? (
                       <>
                         <button
                           onClick={handleDelete}

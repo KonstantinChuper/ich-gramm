@@ -113,7 +113,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
           </button>
         </div>
 
-        <div className="flex">
+        <div className="flex sm:flex-row flex-col">
           <div
             className={`bg-bgColorLight w-full flex-1 rounded-bl-xl ${
               isDragging
@@ -124,7 +124,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <div className="flex flex-col items-center justify-center min-h-[500px] py-2">
+            <div className="flex flex-col items-center justify-center sm:min-h-[500px] min-h-[350px] py-2">
               {selectedImage ? (
                 <div className="relative w-full h-full min-h-[500px]">
                   <Image
@@ -164,7 +164,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
             </div>
           </div>
 
-          <div className="flex flex-col max-w-[340px] flex-1 p-4">
+          <div className="flex flex-col sm:max-w-[340px] max-w-full flex-1 p-4 border-t sm:border-t-0 border-borderColor">
             <div className="flex flex-col gap-3 h-full">
               <div className="flex items-center gap-3">
                 <ProfileBadge

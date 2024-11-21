@@ -25,7 +25,7 @@ export default function MessagesPage() {
   }, [searchParams]);
 
   return (
-    <div className="aside-margin flex h-full bg-primary">
+    <div className="aside-margin flex h-full bg-primary sm:pb-0 pb-[41px]">
       <div className="max-w-[350px] border-r border-borderColor bg-primary flex-1">
         <div className="sticky top-0">
           <div className="flex items-center gap-4 p-6">

@@ -51,7 +51,7 @@ export default function AsideMenu() {
       <aside
         onClick={handleAsideClick}
         className="fixed w-16 md:w-[245px] h-full md:py-[14px] md:pl-[43px] border-r border-r-borderColor 
-        border-b-0 overflow-auto z-50 bg-secondary px-4 pt-[60px]"
+        border-b-0 overflow-auto z-50 bg-secondary px-4 pt-[60px] hidden sm:block"
       >
         <nav className="space-y-7 fixed">
           <div className="md:flex items-center justify-between">
@@ -111,6 +111,63 @@ export default function AsideMenu() {
           </Link>
         </nav>
       </aside>
+
+      <nav
+        className="fixed bottom-0 left-0 right-0 bg-secondary border-t border-borderColor 
+        py-2 px-4 z-50 sm:hidden"
+      >
+        <ul className="flex justify-around items-center">
+          {menuItems.map((item) => (
+            <li key={item.href}>
+              {item.action === "link" ? (
+                <Link
+                  href={item.href}
+                  className="flex flex-col items-center gap-1"
+                  onClick={() => handleMenuItemClick(item)}
+                >
+                  <div className="relative">
+                    <item.Icon isFilled={pathname === item.href && !isSidebarOpen} />
+                    {item.label === "Messages" && unreadCount > 0 && (
+                      <span
+                        className="absolute -top-[6px] -right-2 bg-primaryColor text-white 
+                        rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              ) : (
+                <button
+                  onClick={() => handleMenuItemClick(item)}
+                  className="flex flex-col items-center gap-1"
+                >
+                  <div className="relative">
+                    <item.Icon isFilled={activeSidebarContent === item.href && isSidebarOpen} />
+                    {item.label === "Notifications" && unreadNotifications > 0 && (
+                      <span
+                        className="absolute -top-[6px] -right-2 bg-primaryColor text-white 
+                        rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                      >
+                        {unreadNotifications}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )}
+            </li>
+          ))}
+          <li>
+            <Link href="/profile" className="flex flex-col items-center gap-1">
+              <ProfileBadge
+                src={user?.profile_image || "/default-profile-image.svg"}
+                maxWidth={24}
+              />
+            </Link>
+          </li>
+        </ul>
+      </nav>
+
       <SideBar toggleSidebar={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
         {activeSidebarContent === "/search" && (
           <SearchSideBar onClose={() => setIsSidebarOpen(false)} />
