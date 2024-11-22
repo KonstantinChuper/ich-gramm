@@ -1,13 +1,40 @@
 import { io, Socket } from "socket.io-client";
 
+export interface LastMessage {
+  _id: string;
+  sender_id: string;
+  receiver_id: string;
+  message_text: string;
+  created_at: string;
+}
+
+interface LastMessages {
+  [userId: string]: LastMessage;
+}
+
+let lastMessages: LastMessages = {};
 let socket: Socket | null = null;
 let currentRoom: string | null = null;
 let unreadMessages: Record<string, number> = {};
 
-// Инициализация непрочитанных сообщений
+// Инициализация из localStorage
 if (typeof window !== "undefined") {
   unreadMessages = JSON.parse(localStorage.getItem("unreadMessages") || "{}");
+  lastMessages = JSON.parse(localStorage.getItem("lastMessages") || "{}");
 }
+
+export const setLastMessage = (userId: string, message: LastMessage) => {
+  lastMessages[userId] = message;
+  localStorage.setItem("lastMessages", JSON.stringify(lastMessages));
+};
+
+export const getLastMessage = (userId: string): LastMessage | undefined => {
+  return lastMessages[userId];
+};
+
+export const getAllLastMessages = (): LastMessages => {
+  return lastMessages;
+};
 
 export const connect = (token: string) => {
   if (socket?.connected) return socket;
@@ -72,4 +99,7 @@ export default {
   addUnreadMessage,
   clearUnreadMessages,
   getUnreadMessages,
+  setLastMessage,
+  getLastMessage,
+  getAllLastMessages,
 };

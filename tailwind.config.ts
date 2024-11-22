@@ -50,6 +50,12 @@ const config: Config = {
             "margin-left": "245px",
           },
         },
+        ".link-hover": {
+          "&:hover": {
+            color: "var(--text-gray-color)",
+            transition: "color 0.3s ease",
+          },
+        },
         ".btn": {
           paddingTop: "7px",
           paddingBottom: "7px",

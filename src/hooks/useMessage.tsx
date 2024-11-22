@@ -36,7 +36,6 @@ export const useMessage = (targetUserId?: string) => {
     };
 
     const handleReceiveMessage = (newMessage: Message) => {
-      // Проверяем, не является ли это сообщение дубликатом последнего отправленного
       if (
         lastSentMessage.current &&
         newMessage.message_text === lastSentMessage.current.text &&

@@ -7,6 +7,7 @@ import { useUnreadMessages } from "@/contexts/UnreadMessageContext";
 import ProfileBadge from "@/components/ProfileBadge";
 import socketManager from "@/services/socketManager";
 import useUser from "@/hooks/useUser";
+import { getTimeAgo } from "@/utils/helpers";
 
 interface UserListProps {
   onSelectUser: (userId: string) => void;
@@ -16,14 +17,28 @@ interface UserListProps {
 export default function UserList({ onSelectUser, selectedUserId }: UserListProps) {
   const [chatUsers, setChatUsers] = useState<User[]>([]);
   const { request } = useAxios();
-  const { unreadByUser, clearUnreadMessages } = useUnreadMessages();
+  const { unreadByUser, clearUnreadMessages, getLastMessage } = useUnreadMessages();
   const { user: currentUser } = useUser();
+  const [unreadTimes, setUnreadTimes] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const savedUsers = JSON.parse(localStorage.getItem("recentChats") || "[]");
     const filteredUsers = savedUsers.filter((user: User) => user._id !== currentUser?._id);
     setChatUsers(filteredUsers);
-  }, [currentUser]);
+
+    setUnreadTimes((prev) => {
+      const times = { ...prev };
+      filteredUsers.forEach((user: User) => {
+        const lastMessage = getLastMessage(user._id);
+        if (lastMessage?.created_at) {
+          times[user._id] = lastMessage.created_at;
+        } else if (unreadByUser[user._id]?.lastReceived) {
+          times[user._id] = unreadByUser[user._id].lastReceived;
+        }
+      });
+      return times;
+    });
+  }, [currentUser, unreadByUser]);
 
   useEffect(() => {
     const socket = socketManager.getSocket();
@@ -41,7 +56,7 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
         if (userData) {
           const updatedUsers = [userData, ...chatUsers];
           setChatUsers(updatedUsers);
-          localStorage.setItem("chatUsers", JSON.stringify(updatedUsers));
+          localStorage.setItem("recentChats", JSON.stringify(updatedUsers));
         }
       }
     };
@@ -64,20 +79,26 @@ export default function UserList({ onSelectUser, selectedUserId }: UserListProps
           key={user._id}
           onClick={() => handleUserSelect(user._id)}
           className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-hover transition-colors
-            ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
+          ${selectedUserId === user._id ? "bg-bgColorSecondary" : ""}`}
         >
           <div className="relative">
             <ProfileBadge src={user.profile_image} maxWidth={40} />
-            {unreadByUser[user._id] > 0 && (
+            {unreadByUser[user._id]?.count > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                {unreadByUser[user._id]}
+                {unreadByUser[user._id]?.count}
               </span>
             )}
           </div>
           <div>
             <p className="font-semibold">{user.username}</p>
             <p className="text-sm text-textGrayColor">
-              {unreadByUser[user._id] > 0 ? `${unreadByUser[user._id]} new messages` : "Chat"}
+              {(() => {
+                const lastMessage = getLastMessage(user._id);
+                if (lastMessage?.created_at) {
+                  return `sent a message ${getTimeAgo(lastMessage.created_at)}`;
+                }
+                return "Start chatting";
+              })()}
             </p>
           </div>
         </div>
